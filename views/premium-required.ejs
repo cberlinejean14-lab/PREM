@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="<%= typeof currentLang !== 'undefined' ? currentLang : 'es' %>" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso Premium Requerido - PREM Bot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-main: #0f0f13;
+            --bg-card: #18181f;
+            --bg-sidebar: #131318;
+            --border: #272733;
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --hover-sidebar: rgba(255, 255, 255, 0.03);
+            --primary: #a855f7;
+            --nav-bg: #131318;
+        }
+        [data-theme="light"] {
+            --bg-main: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-sidebar: #f1f5f9;
+            --border: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --hover-sidebar: rgba(0, 0, 0, 0.03);
+            --nav-bg: #f1f5f9;
+        }
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .top-navbar {
+            height: 60px;
+            background: var(--nav-bg);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            box-sizing: border-box;
+            z-index: 100;
+        }
+        .layout-container {
+            display: flex;
+            width: 100%;
+            height: calc(100vh - 60px);
+            overflow: hidden;
+        }
+        sidebar {
+            width: 260px;
+            flex-shrink: 0;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 20px 15px;
+            box-sizing: border-box;
+        }
+        
+        /* Controles Superiores Derecha */
+        .top-right-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .lang-btn, .theme-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .lang-btn:hover, .theme-btn:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 12px rgba(168, 85, 247, 0.25);
+        }
+
+        .theme-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .main-content-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            overflow-y: auto;
+            text-align: center;
+            background-color: var(--bg-main);
+        }
+        .premium-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        .icon-container {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px auto;
+            background: linear-gradient(135deg, #c084fc, #a855f7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 35px;
+            color: #ffffff;
+            box-shadow: 0 0 20px rgba(168,85,247,0.5);
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: var(--text-main);
+        }
+        p {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        .btn-premium {
+            background: linear-gradient(135deg, #c084fc, #a855f7);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.2s, opacity 0.2s;
+            box-shadow: 0 4px 15px rgba(168,85,247,0.4);
+        }
+        .btn-premium:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+        .btn-back {
+            display: block;
+            margin-top: 15px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 13px;
+        }
+        .btn-back:hover {
+            color: var(--text-main);
+        }
+        .menu-item {
+            padding: 10px 14px;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 10px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        .menu-item:hover, .menu-item.active {
+            background: var(--hover-sidebar);
+            color: var(--text-main);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- BARRA SUPERIOR -->
+    <header class="top-navbar">
+        <div style="font-weight: 700; font-size: 16px; color: var(--text-main);">Servidor</div>
+        
+        <div class="top-right-controls">
+            
+            <!-- CAMPANA DE NOTIFICACIONES -->
+            <div class="notification-container" style="position: relative; display: inline-block; z-index: 10000;">
+                <button onclick="toggleNotificationMenu()" id="notificationBtn" class="theme-btn" title="Notificaciones" style="position: relative;">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                    </svg>
+                    <span style="position: absolute; top: 5px; right: 6px; width: 7px; height: 7px; background-color: var(--primary); border-radius: 50%; box-shadow: 0 0 8px var(--primary);"></span>
+                </button>
+                
+                <div id="notificationMenu" style="display: none; position: absolute; right: 0; top: 125%; width: 270px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); padding: 12px; z-index: 99999; text-align: left; backdrop-filter: blur(20px);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 8px;">
+                        <span style="font-weight: 700; font-size: 13px; color: var(--text-main);">🔔 Notificaciones</span>
+                        <span style="font-size: 11px; color: var(--text-muted); cursor: pointer;" onclick="markAsRead()">Marcar leídas</span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <div style="background: var(--bg-main); padding: 10px; border-radius: 10px; border: 1px solid var(--border);">
+                            <div style="font-size: 12px; font-weight: 700; color: var(--primary);">🚀 Actualización PREM</div>
+                            <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Nuevas opciones de personalización ya disponibles.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SELECTOR DE IDIOMA -->
+            <% 
+                const userLang = typeof currentLang !== 'undefined' ? currentLang : 'es';
+            %>
+            <div class="lang-dropdown" style="position: relative; display: inline-block; z-index: 1000;">
+                <button onclick="toggleLangMenu()" class="lang-btn">
+                    <% 
+                        let flag = '🇪🇸'; let langName = 'Español';
+                        if (userLang === 'en') { flag = '🇺🇸'; langName = 'English'; }
+                        else if (userLang === 'pt') { flag = '🇧🇷'; langName = 'Português'; }
+                        else if (userLang === 'fr') { flag = '🇫🇷'; langName = 'Français'; }
+                        else if (userLang === 'hi') { flag = '🇮🇳'; langName = 'हिन्दी'; }
+                        else if (userLang === 'ar') { flag = '🇸🇦'; langName = 'العربية'; }
+                        else if (userLang === 'zh') { flag = '🇨🇳'; langName = '中文'; }
+                    %>
+                    <span><%= flag %></span>
+                    <span><%= langName %></span>
+                    <i class="fa-solid fa-chevron-down" style="font-size: 0.65rem;"></i>
+                </button>
+                <div id="langMenu" style="display: none; position: absolute; right: 0; top: 125%; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); overflow: hidden; min-width: 150px; z-index: 99999;">
+                    <a href="/dashboard/custom-commands?lang=es" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-main); text-decoration: none; font-size: 0.85rem;"><span style="font-size: 1rem;">🇪🇸</span> Español</a>
+                    <a href="/dashboard/custom-commands?lang=en" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-main); text-decoration: none; font-size: 0.85rem;"><span style="font-size: 1rem;">🇺🇸</span> English</a>
+                    <a href="/dashboard/custom-commands?lang=pt" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-main); text-decoration: none; font-size: 0.85rem;"><span style="font-size: 1rem;">🇧🇷</span> Português</a>
+                    <a href="/dashboard/custom-commands?lang=fr" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-main); text-decoration: none; font-size: 0.85rem;"><span style="font-size: 1rem;">🇫🇷</span> Français</a>
+                    <a href="/dashboard/custom-commands?lang=hi" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-main); text-decoration: none; font-size: 0.85rem;"><span style="font-size: 1rem;">🇮🇳</span> हिन्दी</a>
+                    <a href="/dashboard/custom-commands?lang=ar" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-main); text-decoration: none; font-size: 0.85rem;"><span style="font-size: 1rem;">🇸🇦</span> العربية</a>
+                    <a href="/dashboard/custom-commands?lang=zh" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-main); text-decoration: none; font-size: 0.85rem;"><span style="font-size: 1rem;">🇨🇳</span> 中文</a>
+                </div>
+            </div>
+
+            <!-- BOTÓN DE TEMA (CLARO / OSCURO) -->
+            <button class="theme-btn" onclick="toggleTheme()" title="Cambiar tono de pantalla">
+                <i class="fa-solid fa-moon" id="themeIcon"></i>
+            </button>
+
+            <% if (typeof user !== 'undefined' && user) { %>
+                <div style="display: flex; align-items: center; gap: 10px; background: var(--bg-card); padding: 5px 14px 5px 6px; border-radius: 30px; border: 1px solid var(--border);">
+                    <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png" alt="Avatar" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover;">
+                    <span style="font-size: 14px; font-weight: 600; color: var(--text-main);"><%= user.global_name || user.username %></span>
+                </div>
+            <% } %>
+        </div>
+    </header>
+
+    <!-- CONTENEDOR PRINCIPAL Y SIDEBAR -->
+    <div class="layout-container">
+        <sidebar>
+            <a href="/dashboard" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-main); font-weight: 700; margin-bottom: 20px;">
+                <img src="https://cdn.discordapp.com/avatars/1534632950224781548/a_678d6b7de1507542e3636f611d297e20.gif?size=2048" alt="Logo" style="width: 32px; height: 32px; border-radius: 50%;">
+                PREM Bot
+            </a>
+            
+            <div style="font-size: 10px; color: var(--text-muted); font-weight: bold; margin-bottom: 6px; text-transform: uppercase; padding: 0 10px;">Menú Principal</div>
+            
+            <a href="/dashboard" class="menu-item">🏠 Inicio</a>
+            <a href="/dashboard/custom-bot" class="menu-item">🤖 Personalizador</a>
+            <a href="/dashboard/custom-commands" class="menu-item active">⭐ Comandos personalizados</a>
+        </sidebar>
+
+        <!-- CONTENIDO CENTRAL -->
+        <div class="main-content-area">
+            <div class="premium-card">
+                <div class="icon-container">
+                    <i class="fa-solid fa-crown"></i>
+                </div>
+                <h1>Función Exclusiva Premium</h1>
+                <p>La creación de <strong>Comandos Personalizados</strong> es una herramienta avanzada reservada para servidores y usuarios con membresía Premium. Desbloquea esta y otras características exclusivas para llevar tu bot al siguiente nivel.</p>
+                
+                <a href="https://discord.gg/tu-servidor-soporte" target="_blank" class="btn-premium">
+                    <i class="fa-solid fa-star"></i> Obtener PREM Bot Premium
+                </a>
+                
+                <a href="/dashboard" class="btn-back">Volver al panel general</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleNotificationMenu() {
+            const menu = document.getElementById('notificationMenu');
+            if (menu) menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function markAsRead() {
+            const badge = document.querySelector('#notificationBtn span');
+            if (badge) badge.style.display = 'none';
+        }
+
+        function toggleLangMenu() {
+            const menu = document.getElementById('langMenu');
+            if (menu) menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('themeIcon');
+            const currentTheme = html.getAttribute('data-theme');
+
+            if (currentTheme === 'light') {
+                html.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fa-solid fa-moon';
+                localStorage.setItem('prem_theme', 'dark');
+            } else {
+                html.setAttribute('data-theme', 'light');
+                themeIcon.className = 'fa-solid fa-sun';
+                localStorage.setItem('prem_theme', 'light');
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('prem_theme') || 'dark';
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('themeIcon');
+            
+            html.setAttribute('data-theme', savedTheme);
+            if (savedTheme === 'light') {
+                themeIcon.className = 'fa-solid fa-sun';
+            } else {
+                themeIcon.className = 'fa-solid fa-moon';
+            }
+        });
+
+        window.onclick = function(event) {
+            if (!event.target.closest('.notification-container')) {
+                const menu = document.getElementById('notificationMenu');
+                if (menu) menu.style.display = 'none';
+            }
+            if (!event.target.closest('.lang-dropdown')) {
+                const menu = document.getElementById('langMenu');
+                if (menu) menu.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

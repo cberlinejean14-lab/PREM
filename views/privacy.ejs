@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="<%= typeof currentLang !== 'undefined' ? currentLang : 'es' %>" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PREM - Privacy Policy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-gradient: #070514;
+            --card-bg: rgba(18, 14, 38, 0.7);
+            --text-color: #f3e8ff;
+            --text-muted: #c084fc;
+            --accent-color: #a855f7;
+            --accent-glow: rgba(168, 85, 247, 0.35);
+            --border-color: rgba(168, 85, 247, 0.25);
+            --nav-bg: rgba(10, 7, 24, 0.85);
+            --box-highlight: rgba(168, 85, 247, 0.08);
+        }
+
+        [data-theme="light"] {
+            --bg-gradient: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --text-color: #1e1b4b;
+            --text-muted: #6b21a8;
+            --accent-color: #9333ea;
+            --accent-glow: rgba(147, 51, 234, 0.25);
+            --border-color: rgba(147, 51, 234, 0.2);
+            --nav-bg: rgba(255, 255, 255, 0.9);
+            --box-highlight: rgba(147, 51, 234, 0.04);
+        }
+
+        body {
+            background: var(--bg-gradient);
+            background-image: 
+                radial-gradient(at 10% 20%, rgba(126, 34, 206, 0.15) 0px, transparent 50%),
+                radial-gradient(at 90% 80%, rgba(76, 29, 149, 0.15) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-color);
+            font-family: 'Inter', system-ui, sans-serif;
+            margin: 0; padding: 0; min-height: 100vh;
+            display: flex; flex-direction: column; justify-content: space-between;
+        }
+
+        #progress-bar {
+            position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, #c084fc, #ec4899);
+            width: 0%; z-index: 2000; transition: width 0.1s ease;
+        }
+
+        nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 18px 40px; background-color: var(--nav-bg);
+            backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-color);
+            position: sticky; top: 0; z-index: 1000;
+        }
+
+        .nav-left {
+            display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text-color);
+        }
+
+        .bot-avatar {
+            width: 38px; height: 38px; border-radius: 50%; object-fit: cover;
+            border: 2px solid var(--accent-color); box-shadow: 0 0 12px var(--accent-glow);
+        }
+
+        .bot-name {
+            font-weight: 800; font-size: 1.3rem; letter-spacing: 0.5px;
+            background: linear-gradient(45deg, #fff, var(--accent-color));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .unique-container {
+            max-width: 900px; width: 100%; margin: 50px auto; padding: 0 20px;
+            box-sizing: border-box;
+        }
+
+        .hero-legal {
+            text-align: center; margin-bottom: 45px;
+        }
+
+        .hero-legal h1 {
+            font-size: 2.8rem; margin: 0 0 10px 0; font-weight: 900;
+            background: linear-gradient(135deg, #fff 30%, var(--accent-color) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .hero-legal span {
+            color: var(--text-muted); font-size: 0.95rem; font-weight: 500;
+        }
+
+        .legal-card {
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 24px; padding: 50px; backdrop-filter: blur(25px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4); position: relative; overflow: hidden;
+        }
+
+        .legal-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+            background: linear-gradient(90deg, var(--accent-color), #ec4899);
+        }
+
+        .legal-card h2 {
+            font-size: 1.35rem; margin-top: 40px; color: var(--accent-color);
+            display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;
+        }
+
+        .legal-card h3 {
+            font-size: 1.05rem; margin-top: 25px; color: var(--text-color); font-weight: 700;
+        }
+
+        .legal-card p, .legal-card li {
+            color: var(--text-muted); line-height: 1.8; font-size: 1rem;
+        }
+
+        .secure-badge-box {
+            background: var(--box-highlight); border: 1px dashed var(--accent-color);
+            border-radius: 16px; padding: 25px; margin-top: 25px; display: flex; gap: 20px; align-items: center;
+        }
+
+        .secure-badge-box i {
+            font-size: 2.2rem; color: var(--accent-color); flex-shrink: 0;
+        }
+
+        /* Sección de Consentimiento */
+        .consent-section {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .consent-section h3 {
+            font-size: 1.25rem;
+            color: var(--text-color);
+            margin-bottom: 8px;
+        }
+
+        .consent-subtext {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            opacity: 0.85;
+        }
+
+        .consent-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-accept {
+            background: linear-gradient(135deg, #a855f7, #9333ea);
+            color: #ffffff;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px var(--accent-glow);
+            transition: all 0.3s ease;
+        }
+
+        .btn-accept:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--accent-glow);
+        }
+
+        .btn-reject {
+            background: var(--card-bg);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            padding: 12px 28px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-reject:hover {
+            border-color: #ef4444;
+            color: #ef4444;
+            transform: translateY(-2px);
+        }
+
+        /* Notificación Flotante (Toast) */
+        #toastNotification {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(20, 18, 35, 0.95);
+            border: 1px solid var(--border-color);
+            padding: 16px 24px;
+            border-radius: 14px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            z-index: 9999;
+            transform: translateY(120px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #toastNotification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .login-btn, .theme-btn, .lang-btn {
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            color: var(--text-color); padding: 8px 16px; border-radius: 20px;
+            font-weight: 600; text-decoration: none; display: flex; align-items: center;
+            gap: 8px; backdrop-filter: blur(10px); transition: all 0.3s ease; font-size: 0.9rem; cursor: pointer;
+        }
+
+        .login-btn:hover, .theme-btn:hover, .lang-btn:hover {
+            border-color: var(--accent-color); box-shadow: 0 0 15px var(--accent-glow); transform: translateY(-1px);
+        }
+
+        .theme-btn { width: 38px; height: 38px; border-radius: 50%; justify-content: center; padding: 0; }
+
+        footer {
+            text-align: center; padding: 35px; color: var(--text-muted);
+            background: var(--nav-bg); border-top: 1px solid var(--border-color); margin-top: 80px;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .legal-card { padding: 25px; }
+            .hero-legal h1 { font-size: 2.2rem; }
+            nav { padding: 15px 20px; }
+            .secure-badge-box { flex-direction: column; text-align: center; }
+            #toastNotification { right: 15px; left: 15px; bottom: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <% 
+        const userLang = typeof currentLang !== 'undefined' ? currentLang : (typeof lang !== 'undefined' ? lang : 'es');
+        
+        const privacyDict = {
+            es: {
+                heading: "Política de Privacidad",
+                updated: "Última actualización: Agosto de 2026",
+                intro: "En PREM Bot nos tomamos muy en serio la privacidad de nuestros usuarios y comunidades.",
+                sec1: "1. Información que recopilamos",
+                sec1_desc: "Recopilamos únicamente los datos esenciales para garantizar el correcto funcionamiento de las funciones del bot en tus servidores.",
+                sec1_1: "Datos de Discord",
+                sec1_1_desc: "IDs de usuario, nombres de usuario y avatares cuando inicias sesión en el panel web o interactúas con el bot.",
+                sec1_2: "Datos de Servidores",
+                sec1_2_desc: "IDs de servidores, canales y configuraciones guardadas en nuestra base de datos para los sistemas de niveles, economía y moderación.",
+                sec2: "2. Uso de Cookies",
+                sec2_desc: "Utilizamos cookies técnicas y de sesión exclusivamente para mantener tu sesión activa al iniciar sesión en el Dashboard y recordar tus preferencias de tema e idioma.",
+                sec3: "3. Compartir Información",
+                sec3_desc: "No vendemos, comercializamos ni cedemos tu información personal a terceros bajo ninguna circunstancia. Los datos son de uso interno y exclusivo de PREM Bot.",
+                sec4: "4. Seguridad y Pagos",
+                sec4_desc: "Todas las transacciones y procesos de mejora o planes Premium se manejan a través de pasarelas de pago externas y seguras. No almacenamos datos bancarios ni tarjetas de crédito en nuestros servidores.",
+                sec5: "5. Cambios en la Política",
+                sec5_desc: "Nos reservamos el derecho de actualizar esta política de privacidad en cualquier momento. Cualquier modificación importante será comunicada a través de nuestros canales oficiales.",
+                sec6: "6. Eliminación de Datos",
+                sec6_desc: "Puedes solicitar la eliminación completa de los datos de tu servidor o cuenta escribiéndonos directamente en nuestro servidor de soporte de Discord.",
+                acceptQuestion: "¿Aceptas los términos de nuestra Política de Privacidad?",
+                acceptSubtext: "Recibirás una insignia en tu perfil al aceptar los términos. Para verla debes usar el comando /profile",
+                acceptBtn: "Aceptar",
+                rejectBtn: "Rechazar",
+                acceptedText: "¡Gracias por aceptar nuestra política de privacidad!",
+                rejectedText: "Has rechazado la política. Funciones limitadas."
+            },
+            en: {
+                heading: "Privacy Policy",
+                updated: "Last updated: August 2026",
+                intro: "At PREM Bot, we take the privacy of our users and communities very seriously.",
+                sec1: "1. Information We Collect",
+                sec1_desc: "We collect only the essential data required to ensure the proper functioning of the bot's features across your servers.",
+                sec1_1: "Discord Data",
+                sec1_1_desc: "User IDs, usernames, and avatars when logging into the web dashboard or interacting with the bot.",
+                sec1_2: "Server Data",
+                sec1_2_desc: "Server IDs, channels, and configurations saved in our database for leveling, economy, and moderation systems.",
+                sec2: "2. Use of Cookies",
+                sec2_desc: "We use technical and session cookies exclusively to keep you logged into the Dashboard and to remember your theme and language preferences.",
+                sec3: "3. Sharing Information",
+                sec3_desc: "We do not sell, trade, or transfer your personal information to third parties under any circumstances. Data is used strictly for PREM Bot's internal operations.",
+                sec4: "4. Security and Payments",
+                sec4_desc: "All transactions and processes related to upgrades or Premium plans are handled through secure external payment gateways. We do not store banking data or credit cards on our servers.",
+                sec5: "5. Policy Changes",
+                sec5_desc: "We reserve the right to update this privacy policy at any time. Any major modifications will be communicated through our official channels.",
+                sec6: "6. Data Deletion",
+                sec6_desc: "You can request the complete deletion of your server or account data by reaching out to us directly in our Discord support server.",
+                acceptQuestion: "Do you accept the terms of our Privacy Policy?",
+                acceptSubtext: "You will receive a badge on your profile upon accepting the terms. To view it, you must use the /profile command",
+                acceptBtn: "Accept",
+                rejectBtn: "Decline",
+                acceptedText: "Thank you for accepting our privacy policy!",
+                rejectedText: "You have declined the policy. Features limited."
+            },
+            pt: {
+                heading: "Política de Privacidade",
+                updated: "Última atualização: Agosto de 2026",
+                intro: "Na PREM Bot, levamos a privacidade de nossos usuários e comunidades muito a serio.",
+                sec1: "1. Informações que coletamos",
+                sec1_desc: "Coletamos apenas os dados essenciais para garantir o funcionamento correto dos recursos do bot em seus servidores.",
+                sec1_1: "Dados do Discord",
+                sec1_1_desc: "IDs de usuário, nomes de usuário e avatares ao fazer login no painel web ou interagir com o bot.",
+                sec1_2: "Dados do Servidor",
+                sec1_2_desc: "IDs de servidores, canais e configurações salvas em nosso banco de dados para sistemas de níveis, economia e moderação.",
+                sec2: "2. Uso de Cookies",
+                sec2_desc: "Utilizamos cookies técnicos e de sessão exclusivamente para manter você logado no painel de controle e lembrar suas preferências.",
+                sec3: "3. Compartilhamento de Informações",
+                sec3_desc: "Não vendemos, trocamos ou transferimos suas informações pessoais a terceiros sob nenhuma circunstância.",
+                sec4: "4. Segurança e Pagamentos",
+                sec4_desc: "Todas as transações e processos relacionados a planos Premium são gerenciados por gateways de pagamento externos seguros.",
+                sec5: "5. Alterações na Política",
+                sec5_desc: "Reservamo-nos o direito de atualizar esta política de privacidade a qualquer momento.",
+                sec6: "6. Exclusão de Dados",
+                sec6_desc: "Você pode solicitar a exclusão completa dos dados da sua conta entrando em contato em nosso servidor de suporte.",
+                acceptQuestion: "Você aceita os termos da nossa Política de Privacidade?",
+                acceptSubtext: "Você receberá um selo no seu perfil ao aceitar os termos. Para vê-lo, use o comando /profile",
+                acceptBtn: "Aceitar",
+                rejectBtn: "Recusar",
+                acceptedText: "Obrigado por aceitar nossa política de privacidade!",
+                rejectedText: "Você recusou a política. Funções limitadas."
+            },
+            fr: {
+                heading: "Politique de Confidentialité",
+                updated: "Dernière mise à jour : Août 2026",
+                intro: "Chez PREM Bot, nous prenons la confidentialité de nos utilisateurs et communautés très au sérieux.",
+                sec1: "1. Informations que nous recueillons",
+                sec1_desc: "Nous recueillons uniquement les données essentielles pour garantir le bon fonctionnement des fonctionnalités du bot.",
+                sec1_1: "Données Discord",
+                sec1_1_desc: "Identifiants utilisateur, noms d'utilisateur et avatars lors de la connexion au tableau de bord.",
+                sec1_2: "Données de Serveur",
+                sec1_2_desc: "Identifiants de serveurs, salons et configurations enregistrés pour les systèmes de niveaux et d'économie.",
+                sec2: "2. Utilisation des Cookies",
+                sec2_desc: "Nous utilisons des cookies techniques et de session exclusivement pour maintenir votre connexion active.",
+                sec3: "3. Partage d'Informations",
+                sec3_desc: "Nous ne vendons ni ne transférons vos informations personnelles à des tiers en aucune circonstance.",
+                sec4: "4. Sécurité et Paiements",
+                sec4_desc: "Toutes les transactions liées aux plans Premium sont gérées via des passerelles de paiement sécurisées.",
+                sec5: "5. Modifications de la Politique",
+                sec5_desc: "Nous nous réservons le droit de modifier cette politique de confidentialité à tout moment.",
+                sec6: "6. Suppression des Données",
+                sec6_desc: "Vous pouvez demander la suppression complète de vos données en nous contactant sur notre serveur de support.",
+                acceptQuestion: "Acceptez-vous les termes de notre politique de confidentialité ?",
+                acceptSubtext: "Vous recevrez un badge sur votre profil en acceptant les termes. Pour le voir, utilisez la commande /profile",
+                acceptBtn: "Accepter",
+                rejectBtn: "Refuser",
+                acceptedText: "Merci d'avoir accepté notre politique de confidentialité !",
+                rejectedText: "Vous avez refusé. Fonctionnalités limitées."
+            },
+            hi: {
+                heading: "गोपनीयता नीति",
+                updated: "अंतिम अद्यतन: अगस्त 2026",
+                intro: "PREM Bot में, हम अपने उपयोगकर्ताओं और समुदायों की गोपनीयता को बहुत गंभीरता से लेते हैं।",
+                sec1: "1. हम जो जानकारी एकत्र करते हैं",
+                sec1_desc: "हम केवल आपके सर्वर पर बॉट की सुचारू कार्यप्रणाली को सुनिश्चित करने के लिए आवश्यक डेटा एकत्र करते हैं।",
+                sec1_1: "डिस्कॉर्ड डेटा",
+                sec1_1_desc: "वेब डैशबोर्ड पर लॉगिन करते समय या बॉट के साथ इंटरैक्ट करते समय यूजर आईडी, नाम और अवतार।",
+                sec1_2: "सर्वर डेटा",
+                sec1_2_desc: "लेवलिंग, इकोनॉमी और मॉडरेशन सिस्टम के लिए हमारे डेटाबेस में सहेजी गई सर्वर आईडी और सेटिंग्स।",
+                sec2: "2. कुकीज़ का उपयोग",
+                sec2_desc: "हम केवल डैशबोर्ड में आपको लॉगिन रखने और आपकी प्राथमिकताओं को याद रखने के लिए कुकीज़ का उपयोग करते हैं।",
+                sec3: "3. जानकारी साझा करना",
+                sec3_desc: "हम किसी भी परिस्थिति में आपकी व्यक्तिगत जानकारी तीसरे पक्ष को नहीं बेचते या साझा नहीं करते हैं।",
+                sec4: "4. सुरक्षा और भुगतान",
+                sec4_desc: "प्रीमियम योजनाओं से संबंधित सभी लेनदेन सुरक्षित बाहरी भुगतान गेटवे के माध्यम से प्रबंधित किए जाते हैं।",
+                sec5: "5. नीति में बदलाव",
+                sec5_desc: "हम किसी भी समय इस गोपनीयता नीति को अपडेट करने का अधिकार सुरक्षित रखते हैं।",
+                sec6: "6. डेटा हटाना",
+                sec6_desc: "आप हमारे डिस्कॉर्ड सपोर्ट सर्वर पर सीधे संपर्क करके अपने डेटा को हटाने का अनुरोध कर सकते हैं।",
+                acceptQuestion: "क्या आप हमारी गोपनीयता नीति की शर्तों को स्वीकार करते हैं?",
+                acceptSubtext: "शर्तें स्वीकार करने पर आपको अपनी प्रोफ़ाइल पर एक बैッジ मिलेगा। इसे देखने के लिए /profile कमांड का उपयोग करें",
+                acceptBtn: "स्वीकार करें",
+                rejectBtn: "अस्वीकार करें",
+                acceptedText: "हमारी गोपनीयता नीति स्वीकार करने के लिए धन्यवाद!",
+                rejectedText: "आपने नीति अस्वीकार कर दी है।"
+            },
+            ar: {
+                heading: "سياسة الخصوصية",
+                updated: "آخر تحديث: أغسطس 2026",
+                intro: "في PREM Bot، نأخذ خصوصية مستخدمينا ومجتمعاتنا على محمل الجد.",
+                sec1: "1. المعلومات التي نجمعها",
+                sec1_desc: "نجمع البيانات الأساسية فقط لضمان حسن سير عمل ميزات البوت على خوادمك.",
+                sec1_1: "بيانات ديسكورد",
+                sec1_1_desc: "معرفات المستخدمين، وأسماء المستخدمين، والصور الرمزية عند تسجيل الدخول.",
+                sec1_2: "بيانات الخادم",
+                sec1_2_desc: "معرفات الخوادم والقنوات والإعدادات المحفوظة لأنظمة المستويات والاقتصاد.",
+                sec2: "2. استخدام ملفات تعريف الارتباط (Cookies)",
+                sec2_desc: "نستخدَم ملفات تعريف الارتباط التقنية حصرياً للحفاظ على تسجيل دخولك وتذكر تفضيلاتك.",
+                sec3: "3. مشاركة المعلومات",
+                sec3_desc: "نحن لا نبيع أو نتاجر أو ننقل معلوماتك الشخصية إلى أطراف ثالثة تحت أي ظرف من الظروف.",
+                sec4: "4. الأمان المدفوعات",
+                sec4_desc: "تتم إدارة جميع المعاملات المتعلقة بالخطط المميزة عبر بوابة دفع خارجية آمنة.",
+                sec5: "5. التغييرات على السياسة",
+                sec5_desc: "نحتفظ بالحق في تحديث سياسة الخصوصية هذه في أي وقت.",
+                sec6: "6. حذف البيانات",
+                sec6_desc: "يمكنك طلب الحذف الكامل لبيانات خادمك أو حسابك بالتواصل معنا عبر سرير الدعم.",
+                acceptQuestion: "هل تقبل شروط سياسة الخصوصية الخاصة بنا؟",
+                acceptSubtext: "ستتلقى شارة في ملفك الشخصي عند قبول الشروط. لرؤيتها، يجب عليك استخدام الأمر /profile",
+                acceptBtn: "قبول",
+                rejectBtn: "رفض",
+                acceptedText: "شكراً لك على قبول سياسة الخصوصية الخاصة بنا!",
+                rejectedText: "لقد رفضت السياسة."
+            },
+            zh: {
+                heading: "隐私政策",
+                updated: "最后更新：2026年8月",
+                intro: "在 PREM Bot，我们非常重视用户和社区的隐私。",
+                sec1: "1. 我们收集的信息",
+                sec1_desc: "我们仅收集确保机器人在您的服务器上正常运行所需的必要数据。",
+                sec1_1: "Discord 数据",
+                sec1_1_desc: "登录网页控制面板或与机器人互动时的用户 ID、用户名和头像。",
+                sec1_2: "服务器数据",
+                sec1_2_desc: "保存在我们数据库中的服务器 ID、频道和配置，用于等级、经济和管理系统。",
+                sec2: "2. Cookie 的使用",
+                sec2_desc: "我们仅使用技术和会话 Cookie 来保持您登录控制面板并记住您的主题和语言偏好。",
+                sec3: "3. 信息共享",
+                sec3_desc: "在任何情况下，我们都不会向第三方出售、交易或转让您的个人信息。",
+                sec4: "4. 安全与支付",
+                sec4_desc: "与升级或高级方案相关的所有交易均通过安全的外部支付网关处理。我们不会在服务器上存储银行卡数据。",
+                sec5: "5. 政策变更",
+                sec5_desc: "我们保留随时更新本隐私政策的权利。任何重大修改都将通过我们的官方渠道进行沟通。",
+                sec6: "6. 数据删除",
+                sec6_desc: "您可以直接在我们的 Discord 支持服务器中与我们联系，请求完全删除您的服务器或帐户数据。",
+                acceptQuestion: "您是否接受我们的隐私政策条款？",
+                acceptSubtext: "接受条款后，您的个人资料将获得一枚徽章。要查看它，您必须使用 /profile 命令",
+                acceptBtn: "接受",
+                rejectBtn: "拒绝",
+                acceptedText: "感谢您接受我们的隐私政策！",
+                rejectedText: "您已拒绝该政策。"
+            }
+        };
+
+        const t = privacyDict[userLang] || privacyDict['es'];
+    %>
+
+    <div id="progress-bar"></div>
+
+    <nav>
+        <a href="/?lang=<%= userLang %>" class="nav-left">
+            <img src="https://cdn.discordapp.com/avatars/1534632950224781548/a_678d6b7de1507542e3636f611d297e20.gif?size=2048" alt="Bot Avatar" class="bot-avatar">
+            <span class="bot-name">PREM</span>
+        </a>
+
+        <div style="display: flex; align-items: center; gap: 12px;">
+            
+            <!-- CAMPANA DE NOTIFICACIONES -->
+            <div class="notification-container" style="position: relative; display: inline-block; z-index: 10000;">
+                <button onclick="toggleNotificationMenu()" id="notificationBtn" style="background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-color); width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(10px); transition: all 0.3s ease; position: relative;" title="Notificaciones">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                    </svg>
+                    <span style="position: absolute; top: 7px; right: 8px; width: 8px; height: 8px; background-color: var(--accent-color); border-radius: 50%; box-shadow: 0 0 8px var(--accent-color);"></span>
+                </button>
+                
+                <div id="notificationMenu" style="display: none; position: absolute; right: 0; top: 115%; width: 280px; background: var(--nav-bg); backdrop-filter: blur(20px); border: 1px solid var(--border-color); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); padding: 12px; z-index: 99999; text-align: left;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-bottom: 8px;">
+                        <span style="font-weight: 700; font-size: 13px; color: var(--text-color);">🔔 Notificaciones</span>
+                        <span style="font-size: 11px; color: var(--text-muted); cursor: pointer;" onclick="markAsRead()">Marcar leídas</span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <div style="background: var(--card-bg); padding: 10px; border-radius: 10px; border: 1px solid var(--border-color);">
+                            <div style="font-size: 12px; font-weight: 700; color: var(--accent-color);">🚀 Actualización PREM</div>
+                            <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Nuevas opciones de personalización ya disponibles.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Selector de Idioma -->
+            <div class="lang-dropdown" style="position: relative; display: inline-block; z-index: 1000;">
+                <button onclick="toggleLangMenu()" class="lang-btn">
+                    <% 
+                        let flag = '🇪🇸'; let langName = 'Español';
+                        if (userLang === 'en') { flag = '🇺🇸'; langName = 'English'; }
+                        else if (userLang === 'pt') { flag = '🇧🇷'; langName = 'Português'; }
+                        else if (userLang === 'fr') { flag = '🇫🇷'; langName = 'Français'; }
+                        else if (userLang === 'hi') { flag = '🇮🇳'; langName = 'हिन्दी'; }
+                        else if (userLang === 'ar') { flag = '🇸🇦'; langName = 'العربية'; }
+                        else if (userLang === 'zh') { flag = '🇨🇳'; langName = '中文'; }
+                    %>
+                    <span><%= flag %></span>
+                    <span><%= langName %></span>
+                    <i class="fa-solid fa-chevron-down" style="font-size: 0.7rem;"></i>
+                </button>
+                <div id="langMenu" style="display: none; position: absolute; right: 0; top: 120%; background: var(--nav-bg); backdrop-filter: blur(20px); border: 1px solid var(--border-color); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); overflow: hidden; min-width: 160px;">
+                    <a href="/privacy?lang=es" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-color); text-decoration: none; font-size: 0.85rem;"><span style="font-size: 1rem;">🇪🇸</span> Español</a>
+                    <a href="/privacy?lang=en" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-color); text-decoration: none; font-size: 0.85rem;"><span style="font-size: 1rem;">🇺🇸</span> English</a>
+                    <a href="/privacy?lang=pt" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-color); text-decoration: none; font-size: 0.85rem;"><span style="font-size: 1rem;">🇧🇷</span> Português</a>
+                    <a href="/privacy?lang=fr" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-color); text-decoration: none; font-size: 0.85rem;"><span style="font-size: 1rem;">🇫🇷</span> Français</a>
+                    <a href="/privacy?lang=hi" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-color); text-decoration: none; font-size: 0.85rem;"><span style="font-size: 1rem;">🇮🇳</span> हिन्दी</a>
+                    <a href="/privacy?lang=ar" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-color); text-decoration: none; font-size: 0.85rem;"><span style="font-size: 1rem;">🇸🇦</span> العربية</a>
+                    <a href="/privacy?lang=zh" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-color); text-decoration: none; font-size: 0.85rem;"><span style="font-size: 1rem;">🇨🇳</span> 中文</a>
+                </div>
+            </div>
+
+            <!-- Botón Tema -->
+            <button class="theme-btn" onclick="toggleTheme()" title="Cambiar tema">
+                <i class="fa-solid fa-moon" id="themeIcon"></i>
+            </button>
+
+            <!-- Perfil / Login -->
+            <% if (typeof user !== 'undefined' && user) { %>
+                <div class="user-dropdown" style="position: relative; display: inline-block;">
+                    <button onclick="toggleUserMenu()" class="lang-btn" style="padding: 4px 12px 4px 5px;">
+                        <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png" alt="Avatar" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover;">
+                        <span style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= user.username %></span>
+                        <i class="fa-solid fa-chevron-down" style="font-size: 0.7rem;"></i>
+                    </button>
+                    <div id="userMenu" style="display: none; position: absolute; right: 0; top: 120%; background: var(--nav-bg); backdrop-filter: blur(20px); border: 1px solid var(--border-color); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); overflow: hidden; min-width: 150px;">
+                        <a href="/dashboard?lang=<%= userLang %>" style="display: flex; align-items: center; gap: 8px; padding: 10px 14px; color: var(--text-color); text-decoration: none; font-size: 0.85rem;"><i class="fa-solid fa-sliders"></i> Dashboard</a>
+                        <a href="/logout" style="display: flex; align-items: center; gap: 8px; padding: 10px 14px; color: #f87171; text-decoration: none; font-size: 0.85rem;"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+                    </div>
+                </div>
+            <% } else { %>
+                <a href="/auth/discord" class="login-btn"><i class="fa-brands fa-discord"></i> Login</a>
+            <% } %>
+        </div>
+    </nav>
+
+    <div class="unique-container">
+        <div class="hero-legal">
+            <h1><%= t.heading %></h1>
+            <span><i class="fa-regular fa-clock"></i> <%= t.updated %></span>
+        </div>
+
+        <div class="legal-card">
+            <p style="font-size: 1.1rem; border-left: 3px solid var(--accent-color); padding-left: 15px; margin-bottom: 35px;"><%= t.intro %></p>
+
+            <h2><i class="fa-solid fa-shield-halved"></i> <%= t.sec1 %></h2>
+            <p><%= t.sec1_desc %></p>
+            
+            <h3><%= t.sec1_1 %></h3>
+            <p><%= t.sec1_1_desc %></p>
+
+            <h3><%= t.sec1_2 %></h3>
+            <p><%= t.sec1_2_desc %></p>
+
+            <h2><i class="fa-solid fa-cookie-bite"></i> <%= t.sec2 %></h2>
+            <p><%= t.sec2_desc %></p>
+
+            <h2><i class="fa-solid fa-handshake-angle"></i> <%= t.sec3 %></h2>
+            <p><%= t.sec3_desc %></p>
+
+            <h2><i class="fa-solid fa-credit-card"></i> <%= t.sec4 %></h2>
+            <div class="secure-badge-box">
+                <i class="fa-solid fa-lock"></i>
+                <p style="margin: 0;"><%= t.sec4_desc %></p>
+            </div>
+
+            <h2><i class="fa-solid fa-triangle-exclamation"></i> <%= t.sec5 %></h2>
+            <p><%= t.sec5_desc %></p>
+
+            <h2><i class="fa-solid fa-user-slash"></i> <%= t.sec6 %></h2>
+            <p><%= t.sec6_desc %></p>
+
+            <!-- SECCIÓN DE PREGUNTA, TEXTO PEQUEÑO Y BOTONES -->
+            <div class="consent-section">
+                <h3><%= t.acceptQuestion %></h3>
+                <div class="consent-subtext"><%= t.acceptSubtext %></div>
+                <div class="consent-buttons">
+                    <button class="btn-accept" onclick="handleConsent(true)">
+                        <i class="fa-solid fa-check"></i> <%= t.acceptBtn %>
+                    </button>
+                    <button class="btn-reject" onclick="handleConsent(false)">
+                        <i class="fa-solid fa-xmark"></i> <%= t.rejectBtn %>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFICACIÓN FLOTANTE (TOAST) -->
+    <div id="toastNotification">
+        <i id="toastIcon" class="fa-solid fa-circle-check" style="font-size: 1.2rem;"></i>
+        <span id="toastText"></span>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 PREM Bot. All rights reserved.</p>
+    </footer>
+
+    <script>
+        window.addEventListener('scroll', () => {
+            const winScroll = document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progress-bar').style.width = scrolled + '%';
+        });
+
+        let toastTimer;
+        function handleConsent(isAccepted) {
+            const toast = document.getElementById('toastNotification');
+            const icon = document.getElementById('toastIcon');
+            const text = document.getElementById('toastText');
+
+            if (isAccepted) {
+                icon.className = 'fa-solid fa-circle-check';
+                icon.style.color = '#4ade80';
+                text.innerText = "<%= t.acceptedText %>";
+                localStorage.setItem('prem_privacy_accepted', 'true');
+
+                fetch('/api/accept-privacy', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ accepted: true })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Respuesta del servidor:", data);
+                })
+                .catch(error => {
+                    console.error("Error al asignar la insignia:", error);
+                });
+
+            } else {
+                icon.className = 'fa-solid fa-triangle-exclamation';
+                icon.style.color = '#f87171';
+                text.innerText = "<%= t.rejectedText %>";
+                localStorage.setItem('prem_privacy_accepted', 'false');
+            }
+
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+
+        function toggleLangMenu() {
+            const menu = document.getElementById('langMenu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function toggleNotificationMenu() {
+            const menu = document.getElementById('notificationMenu');
+            if (menu) {
+                menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+            }
+        }
+
+        function markAsRead() {
+            const badge = document.querySelector('#notificationBtn span');
+            if (badge) badge.style.display = 'none';
+        }
+
+        function toggleUserMenu() {
+            const userMenu = document.getElementById('userMenu');
+            if (userMenu) {
+                userMenu.style.display = userMenu.style.display === 'block' ? 'none' : 'block';
+            }
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('themeIcon');
+            const currentTheme = html.getAttribute('data-theme');
+
+            if (currentTheme === 'light') {
+                html.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fa-solid fa-moon';
+                localStorage.setItem('prem_theme', 'dark');
+            } else {
+                html.setAttribute('data-theme', 'light');
+                themeIcon.className = 'fa-solid fa-sun';
+                localStorage.setItem('prem_theme', 'light');
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('prem_theme') || 'dark';
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('themeIcon');
+            
+            html.setAttribute('data-theme', savedTheme);
+            if (savedTheme === 'light') {
+                themeIcon.className = 'fa-solid fa-sun';
+            } else {
+                themeIcon.className = 'fa-solid fa-moon';
+            }
+        });
+
+        window.onclick = function(event) {
+            if (!event.target.closest('.notification-container')) {
+                const menu = document.getElementById('notificationMenu');
+                if (menu) menu.style.display = 'none';
+            }
+            if (!event.target.closest('.lang-dropdown')) {
+                const menu = document.getElementById('langMenu');
+                if (menu) menu.style.display = 'none';
+            }
+            if (!event.target.closest('.user-dropdown')) {
+                const userMenu = document.getElementById('userMenu');
+                if (userMenu) userMenu.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

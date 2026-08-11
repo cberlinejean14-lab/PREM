@@ -1,0 +1,108 @@
+<%- include('partials/head') %>
+<%- include('partials/sidebar') %>
+
+    <!-- Contenido Principal -->
+    <main class="main-content">
+        <header class="topnav">
+            <div class="server-name-display">
+                <% if (typeof guildData !== 'undefined' && guildData && guildData.icon) { %>
+                    <img src="https://cdn.discordapp.com/icons/<%= guildData.id %>/<%= guildData.icon %>.png" alt="Server Icon" class="server-icon-small">
+                <% } %>
+                <span><%= (typeof guildData !== 'undefined' && guildData) ? guildData.name : 'Servidor' %></span>
+            </div>
+
+            <!-- Selector de Idioma -->
+            <div class="lang-dropdown">
+                <button onclick="toggleLangMenu()" class="lang-btn-top">
+                    <% 
+                        let flag = '🇪🇸'; let langName = 'Español';
+                        if (currentLang === 'en') { flag = '🇺🇸'; langName = 'English'; }
+                        else if (currentLang === 'pt') { flag = '🇧🇷'; langName = 'Português'; }
+                        else if (currentLang === 'fr') { flag = '🇫🇷'; langName = 'Français'; }
+                        else if (currentLang === 'hi') { flag = '🇮🇳'; langName = 'हिन्दी'; }
+                        else if (currentLang === 'ar') { flag = '🇸🇦'; langName = 'العربية'; }
+                        else if (currentLang === 'zh') { flag = '🇨🇳'; langName = '中文'; }
+                    %>
+                    <span style="font-size: 1.1rem;"><%= flag %></span>
+                    <span><%= langName %></span>
+                    <i class="fa-solid fa-chevron-down" style="font-size: 0.8rem; margin-left: 4px; color: var(--text-muted);"></i>
+                </button>
+                <div id="langMenu" style="display: none; position: absolute; right: 0; top: 115%; background: rgba(25, 18, 48, 0.95); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); overflow: hidden; z-index: 999999; min-width: 160px;">
+                    <a href="#" onclick="changeLanguage('es')" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-main); text-decoration: none; font-size: 0.9rem;"><span style="font-size: 1.1rem;">🇪🇸</span> Español</a>
+                    <a href="#" onclick="changeLanguage('en')" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-main); text-decoration: none; font-size: 0.9rem;"><span style="font-size: 1.1rem;">🇺🇸</span> English</a>
+                    <a href="#" onclick="changeLanguage('pt')" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-main); text-decoration: none; font-size: 0.9rem;"><span style="font-size: 1.1rem;">🇧🇷</span> Português</a>
+                    <a href="#" onclick="changeLanguage('fr')" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-main); text-decoration: none; font-size: 0.9rem;"><span style="font-size: 1.1rem;">🇫🇷</span> Français</a>
+                    <a href="#" onclick="changeLanguage('hi')" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-main); text-decoration: none; font-size: 0.9rem;"><span style="font-size: 1.1rem;">🇮🇳</span> हिन्दी</a>
+                    <a href="#" onclick="changeLanguage('ar')" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-main); text-decoration: none; font-size: 0.9rem;"><span style="font-size: 1.1rem;">🇸🇦</span> العربية</a>
+                    <a href="#" onclick="changeLanguage('zh')" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-main); text-decoration: none; font-size: 0.9rem;"><span style="font-size: 1.1rem;">🇨🇳</span> 中文</a>
+                </div>
+            </div>
+
+            <!-- Perfil de Usuario -->
+            <% if (typeof user !== 'undefined' && user) { %>
+                <div class="user-profile">
+                    <% if (user.avatar) { %>
+                        <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png" alt="Avatar" class="user-avatar">
+                    <% } else { %>
+                        <img src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar" class="user-avatar">
+                    <% } %>
+                    <span class="user-username"><%= user.username %></span>
+                </div>
+            <% } %>
+        </header>
+
+        <div class="dashboard-container">
+            <h1 class="page-title">
+                <% if (currentLang === 'en') { %>Server Settings<% } 
+                else if (currentLang === 'pt') { %>Configurações do Servidor<% } 
+                else if (currentLang === 'fr') { %>Paramètres du serveur<% } 
+                else if (currentLang === 'hi') { %>सर्वर सेटिंग्स<% } 
+                else if (currentLang === 'ar') { %>إعدادات الخادم<% } 
+                else if (currentLang === 'zh') { %>服务器设置<% } 
+                else { %>Ajustes del Servidor<% } %>
+            </h1>
+            <p class="subtitle" style="color: var(--text-muted); margin-bottom: 30px;">
+                <% if (currentLang === 'en') { %>Additional and advanced platform options.<% } 
+                else if (currentLang === 'pt') { %>Opções adicionais e avançadas da plataforma.<% } 
+                else if (currentLang === 'fr') { %>Options supplémentaires et avancées de la plateforme.<% } 
+                else if (currentLang === 'hi') { %>अतिरिक्त और उन्नत प्लेटफ़ॉर्म विकल्प।<% } 
+                else if (currentLang === 'ar') { %>خيارات إضافية ومتقدمة للمنصة.<% } 
+                else if (currentLang === 'zh') { %>平台的其他高级选项。<% } 
+                else { %>Opciones adicionales y avanzadas de la plataforma.<% } %>
+            </p>
+            
+            <div class="card">
+                <p>
+                    <% if (currentLang === 'en') { %>Here you can add more global administration panel configurations in the future.<% } 
+                    else if (currentLang === 'pt') { %>Aqui você pode adicionar mais configurações globais do painel de administração no futuro.<% } 
+                    else if (currentLang === 'fr') { %>Ici, vous pourrez ajouter d'autres configurations globales du panneau d'administration à l'avenir.<% } 
+                    else if (currentLang === 'hi') { %>यहाँ आप भविष्य में अधिक वैश्विक प्रशासन पैनल कॉन्फ़िगरेशन जोड़ सकते हैं।<% } 
+                    else if (currentLang === 'ar') { %>هنا يمكنك إضافة المزيد من تكوينات لوحة الإدارة العامة في المستقبل.<% } 
+                    else if (currentLang === 'zh') { %>您将来可以在此处添加更多全局管理面板配置。<% } 
+                    else { %>Aquí puedes agregar más configuraciones globales del panel de administración a futuro.<% } %>
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function toggleLangMenu() {
+            const menu = document.getElementById('langMenu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function changeLanguage(langCode) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('lang', langCode);
+            window.location.href = url.toString();
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.closest('.lang-dropdown')) {
+                const menu = document.getElementById('langMenu');
+                if (menu) menu.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

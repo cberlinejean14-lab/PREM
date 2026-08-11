@@ -1,0 +1,115 @@
+<%- include('partials/head') %>
+<%- include('partials/sidebar') %>
+
+    <!-- Contenido Principal -->
+    <main class="main-content">
+        <header class="topnav">
+            <div class="server-name-display">
+                <% if (typeof guildData !== 'undefined' && guildData && guildData.icon) { %>
+                    <img src="https://cdn.discordapp.com/icons/<%= guildData.id %>/<%= guildData.icon %>.png" alt="Server Icon" class="server-icon-small">
+                <% } %>
+                <span><%= (typeof guildData !== 'undefined' && guildData) ? guildData.name : 'Servidor' %></span>
+            </div>
+
+            <!-- Selector de Idioma -->
+            <div class="lang-dropdown">
+                <button onclick="toggleLangMenu()" class="lang-btn-top">
+                    <% 
+                        let flag = '🇪🇸'; let langName = 'Español';
+                        if (currentLang === 'en') { flag = '🇺🇸'; langName = 'English'; }
+                        else if (currentLang === 'pt') { flag = '🇧🇷'; langName = 'Português'; }
+                        else if (currentLang === 'fr') { flag = '🇫🇷'; langName = 'Français'; }
+                        else if (currentLang === 'hi') { flag = '🇮🇳'; langName = 'हिन्दी'; }
+                        else if (currentLang === 'ar') { flag = '🇸🇦'; langName = 'العربية'; }
+                        else if (currentLang === 'zh') { flag = '🇨🇳'; langName = '中文'; }
+                    %>
+                    <span style="font-size: 1.1rem;"><%= flag %></span>
+                    <span><%= langName %></span>
+                    <i class="fa-solid fa-chevron-down" style="font-size: 0.8rem; margin-left: 4px; color: var(--text-muted);"></i>
+                </button>
+                <div id="langMenu" style="display: none; position: absolute; right: 0; top: 115%; background: rgba(25, 18, 48, 0.95); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); overflow: hidden; z-index: 999999; min-width: 160px;">
+                    <a href="#" onclick="changeLanguage('es')" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-main); text-decoration: none; font-size: 0.9rem;"><span style="font-size: 1.1rem;">🇪🇸</span> Español</a>
+                    <a href="#" onclick="changeLanguage('en')" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-main); text-decoration: none; font-size: 0.9rem;"><span style="font-size: 1.1rem;">🇺🇸</span> English</a>
+                    <a href="#" onclick="changeLanguage('pt')" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-main); text-decoration: none; font-size: 0.9rem;"><span style="font-size: 1.1rem;">🇧🇷</span> Português</a>
+                    <a href="#" onclick="changeLanguage('fr')" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-main); text-decoration: none; font-size: 0.9rem;"><span style="font-size: 1.1rem;">🇫🇷</span> Français</a>
+                    <a href="#" onclick="changeLanguage('hi')" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-main); text-decoration: none; font-size: 0.9rem;"><span style="font-size: 1.1rem;">🇮🇳</span> हिन्दी</a>
+                    <a href="#" onclick="changeLanguage('ar')" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-main); text-decoration: none; font-size: 0.9rem;"><span style="font-size: 1.1rem;">🇸🇦</span> العربية</a>
+                    <a href="#" onclick="changeLanguage('zh')" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-main); text-decoration: none; font-size: 0.9rem;"><span style="font-size: 1.1rem;">🇨🇳</span> 中文</a>
+                </div>
+            </div>
+
+            <!-- Perfil de Usuario -->
+            <% if (typeof user !== 'undefined' && user) { %>
+                <div class="user-profile">
+                    <% if (user.avatar) { %>
+                        <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png" alt="Avatar" class="user-avatar">
+                    <% } else { %>
+                        <img src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar" class="user-avatar">
+                    <% } %>
+                    <span class="user-username"><%= user.username %></span>
+                </div>
+            <% } %>
+        </header>
+
+        <div class="dashboard-container">
+            <h1 class="page-title">Sistema de Niveles</h1>
+            <p class="subtitle" style="color: var(--text-muted); margin-bottom: 30px;">Configura los anuncios, estados y canales ignorados del sistema de niveles.</p>
+            
+            <div class="card">
+                <form action="/dashboard/<%= guildId %>/niveles?lang=<%= currentLang %>" method="POST">
+                    
+                    <label style="color: var(--text-main); font-weight: 500;">Estado del Sistema:</label>
+                    <div style="display: flex; align-items: center; gap: 10px; margin-top: 5px; margin-bottom: 15px;">
+                        <input type="checkbox" name="sistemaNiveles" value="on" <%= sistemaNiveles === 'on' ? 'checked' : '' %> style="width: 20px; cursor: pointer;">
+                        <span style="color: var(--text-muted);">Activar sistema de niveles</span>
+                    </div>
+
+                    <label for="canalNivel" style="color: var(--text-main); font-weight: 500; display: block; margin-bottom: 5px;">Canal de Anuncios de Nivel:</label>
+                    <select id="canalNivel" name="canalNivel" style="width: 100%; background: rgba(15, 12, 27, 0.6); border: 1px solid var(--glass-border); padding: 10px; border-radius: 10px; color: var(--text-main); margin-bottom: 15px;">
+                        <option value="">Enviar en el mismo canal donde habló</option>
+                        <% canales.forEach(canal => { %>
+                            <option value="<%= canal.id %>" <%= canalNivel === canal.id ? 'selected' : '' %>>
+                                #<%= canal.name %>
+                            </option>
+                        <% }) %>
+                    </select>
+
+                    <label for="canalesIgnorados" style="color: var(--text-main); font-weight: 500; display: block; margin-bottom: 5px;">Canales Ignorados (Donde no se gana XP):</label>
+                    <select id="canalesIgnorados" name="canalesIgnorados" multiple style="width: 100%; background: rgba(15, 12, 27, 0.6); border: 1px solid var(--glass-border); padding: 10px; border-radius: 10px; color: var(--text-main); height: 100px; margin-bottom: 15px;">
+                        <% canales.forEach(canal => { %>
+                            <option value="<%= canal.id %>" <%= canalesIgnorados.includes(canal.id) ? 'selected' : '' %>>
+                                #<%= canal.name %>
+                            </option>
+                        <% }) %>
+                    </select>
+
+                    <label for="msgNivel" style="color: var(--text-main); font-weight: 500; display: block; margin-bottom: 5px;">Mensaje de Subida de Nivel:</label>
+                    <input type="text" id="msgNivel" name="msgNivel" value="<%= msgNivel %>" required style="width: 100%; background: rgba(15, 12, 27, 0.6); border: 1px solid var(--glass-border); padding: 10px; border-radius: 10px; color: var(--text-main); margin-bottom: 20px; box-sizing: border-box;">
+                    
+                    <button type="submit" style="background: linear-gradient(135deg, #a855f7, #c084fc); border: none; color: white; padding: 10px 20px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: opacity 0.2s;"><%= t.saveChanges %></button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function toggleLangMenu() {
+            const menu = document.getElementById('langMenu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function changeLanguage(langCode) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('lang', langCode);
+            window.location.href = url.toString();
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.closest('.lang-dropdown')) {
+                const menu = document.getElementById('langMenu');
+                if (menu) menu.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

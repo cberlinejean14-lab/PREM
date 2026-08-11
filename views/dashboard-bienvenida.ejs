@@ -1,0 +1,100 @@
+<%- include('partials/head') %>
+<%- include('partials/sidebar') %>
+
+    <!-- Contenido Principal -->
+    <main class="main-content">
+        <header class="topnav">
+            <div class="server-name-display">
+                <% if (typeof guildData !== 'undefined' && guildData && guildData.icon) { %>
+                    <img src="https://cdn.discordapp.com/icons/<%= guildData.id %>/<%= guildData.icon %>.png" alt="Server Icon" class="server-icon-small">
+                <% } %>
+                <span><%= (typeof guildData !== 'undefined' && guildData) ? guildData.name : 'Servidor' %></span>
+            </div>
+
+            <!-- Selector de Idioma -->
+            <div class="lang-dropdown">
+                <button onclick="toggleLangMenu()" class="lang-btn-top">
+                    <% 
+                        let flag = '🇪🇸'; let langName = 'Español';
+                        if (currentLang === 'en') { flag = '🇺🇸'; langName = 'English'; }
+                        else if (currentLang === 'pt') { flag = '🇧🇷'; langName = 'Português'; }
+                        else if (currentLang === 'fr') { flag = '🇫🇷'; langName = 'Français'; }
+                        else if (currentLang === 'hi') { flag = '🇮🇳'; langName = 'हिन्दी'; }
+                        else if (currentLang === 'ar') { flag = '🇸🇦'; langName = 'العربية'; }
+                        else if (currentLang === 'zh') { flag = '🇨🇳'; langName = '中文'; }
+                    %>
+                    <span style="font-size: 1.1rem;"><%= flag %></span>
+                    <span><%= langName %></span>
+                    <i class="fa-solid fa-chevron-down" style="font-size: 0.8rem; margin-left: 4px; color: var(--text-muted);"></i>
+                </button>
+                <div id="langMenu" style="display: none; position: absolute; right: 0; top: 115%; background: rgba(25, 18, 48, 0.95); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); overflow: hidden; z-index: 999999; min-width: 160px;">
+                    <a href="#" onclick="changeLanguage('es')" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-main); text-decoration: none; font-size: 0.9rem;"><span style="font-size: 1.1rem;">🇪🇸</span> Español</a>
+                    <a href="#" onclick="changeLanguage('en')" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-main); text-decoration: none; font-size: 0.9rem;"><span style="font-size: 1.1rem;">🇺🇸</span> English</a>
+                    <a href="#" onclick="changeLanguage('pt')" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-main); text-decoration: none; font-size: 0.9rem;"><span style="font-size: 1.1rem;">🇧🇷</span> Português</a>
+                    <a href="#" onclick="changeLanguage('fr')" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-main); text-decoration: none; font-size: 0.9rem;"><span style="font-size: 1.1rem;">🇫🇷</span> Français</a>
+                    <a href="#" onclick="changeLanguage('hi')" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-main); text-decoration: none; font-size: 0.9rem;"><span style="font-size: 1.1rem;">🇮🇳</span> हिन्दी</a>
+                    <a href="#" onclick="changeLanguage('ar')" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-main); text-decoration: none; font-size: 0.9rem;"><span style="font-size: 1.1rem;">🇸🇦</span> العربية</a>
+                    <a href="#" onclick="changeLanguage('zh')" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-main); text-decoration: none; font-size: 0.9rem;"><span style="font-size: 1.1rem;">🇨🇳</span> 中文</a>
+                </div>
+            </div>
+
+            <!-- Perfil de Usuario -->
+            <% if (typeof user !== 'undefined' && user) { %>
+                <div class="user-profile">
+                    <% if (user.avatar) { %>
+                        <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png" alt="Avatar" class="user-avatar">
+                    <% } else { %>
+                        <img src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar" class="user-avatar">
+                    <% } %>
+                    <span class="user-username"><%= user.username %></span>
+                </div>
+            <% } %>
+        </header>
+
+        <div class="dashboard-container">
+            <h1 class="page-title">
+                <% if (currentLang === 'en') { %>Welcome & Goodbye<% } 
+                else if (currentLang === 'pt') { %>Boas-vindas e Despedida<% } 
+                else if (currentLang === 'fr') { %>Bienvenue et Au revoir<% } 
+                else if (currentLang === 'hi') { %>स्वागत और विदाई<% } 
+                else if (currentLang === 'ar') { %>الترحيب والوداع<% } 
+                else if (currentLang === 'zh') { %>欢迎与告别<% } 
+                else { %>Bienvenida y Despedida<% } %>
+            </h1>
+            <p class="subtitle" style="color: var(--text-muted); margin-bottom: 30px;">
+                <% if (currentLang === 'en') { %>Configure automated messages for when a user joins or leaves the server.<% } 
+                else if (currentLang === 'pt') { %>Configure mensagens automáticas para quando um usuário entrar ou sair do servidor.<% } 
+                else if (currentLang === 'fr') { %>Configurez des messages automatisés lorsqu'un utilisateur rejoint ou quitte le serveur.<% } 
+                else if (currentLang === 'hi') { %>जब कोई उपयोगकर्ता सर्वर में शामिल होता है या छोड़ता है तो स्वचालित संदेश कॉन्फ़िगर करें।<% } 
+                else if (currentLang === 'ar') { %>تكوين الرسائل التلقائية عندما ينضم مستخدم إلى الخادم أو يغادره.<% } 
+                else if (currentLang === 'zh') { %>配置当用户加入或离开服务器时的自动消息。<% } 
+                else { %>Configura los mensajes automáticos para cuando un usuario entra o sale del servidor.<% } %>
+            </p>
+            
+            <div class="card">
+                <!-- Aquí puedes colocar tu formulario o contenido de bienvenida -->
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function toggleLangMenu() {
+            const menu = document.getElementById('langMenu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function changeLanguage(langCode) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('lang', langCode);
+            window.location.href = url.toString();
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.closest('.lang-dropdown')) {
+                const menu = document.getElementById('langMenu');
+                if (menu) menu.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

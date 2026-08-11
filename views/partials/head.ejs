@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="<%= typeof lang !== 'undefined' ? lang : 'es' %>">
+<head>
+    <meta charset="UTF-8">
+    <title>PREM Bot - Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-main: #07050d;          
+            --bg-sidebar: #0b0914;       
+            --bg-card: rgba(25, 18, 42, 0.55); 
+            --text-main: #ffffff;
+            --text-muted: #c4bcdb;
+            --accent: #b875f8;          
+            --border: rgba(184, 117, 248, 0.2); 
+            --success: #00c851;
+            --hover-sidebar: rgba(184, 117, 248, 0.12);
+        }
+
+        [data-theme="light"] {
+            --bg-main: #faf5ff;
+            --bg-sidebar: #ffffff;
+            --bg-card: rgba(255, 255, 255, 0.85);
+            --text-main: #1e1b4b;
+            --text-muted: #6b21a8;
+            --accent: #9333ea;
+            --border: rgba(147, 51, 234, 0.2);
+            --hover-sidebar: rgba(147, 51, 234, 0.1);
+        }
+
+        body {
+            font-family: 'Whitney', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(139, 92, 246, 0.22) 0%, transparent 45%),
+                radial-gradient(circle at 85% 85%, rgba(217, 70, 239, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(79, 70, 229, 0.12) 0%, transparent 60%);
+            background-attachment: fixed;
+            display: flex;
+            flex-direction: column;
+        }
+
+        [data-theme="light"] body {
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(192, 132, 252, 0.2) 0%, transparent 45%),
+                radial-gradient(circle at 85% 85%, rgba(244, 114, 182, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(129, 140, 248, 0.1) 0%, transparent 60%);
+        }
+
+        .top-navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 60px;
+            padding: 0 30px;
+            background-color: var(--bg-sidebar);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+            z-index: 100;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .theme-toggle-btn {
+            background: rgba(45, 35, 75, 0.9);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: all 0.2s;
+        }
+
+        .theme-toggle-btn:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 12px rgba(184, 117, 248, 0.4);
+        }
+
+        .lang-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .lang-select {
+            background: rgba(45, 35, 75, 0.9); 
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .lang-select:hover, .lang-select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 12px rgba(184, 117, 248, 0.3);
+        }
+
+        .lang-select option {
+            background-color: var(--bg-sidebar);
+            color: var(--text-main);
+            padding: 12px;
+        }
+
+        .layout-container {
+            display: flex;
+            height: calc(100vh - 60px);
+            width: 100%;
+            overflow: hidden;
+        }
+
+        sidebar {
+            width: 260px;
+            background-color: var(--bg-sidebar);
+            backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            padding: 20px 15px;
+            border-right: 1px solid var(--border);
+            box-sizing: border-box;
+            flex-shrink: 0;
+            height: 100%;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 10px;
+            text-decoration: none;
+        }
+
+        .search-wrapper {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-box-container {
+            display: flex;
+            align-items: center;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 8px 12px;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .search-box-container:focus-within {
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(184, 117, 248, 0.25);
+        }
+
+        .search-icon {
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+
+        .search-box {
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-size: 13px;
+            width: 100%;
+            outline: none;
+            padding: 4px 0;
+        }
+
+        .search-shortcut {
+            background: rgba(128, 128, 128, 0.15);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 10px;
+            padding: 2px 6px;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .search-results-dropdown {
+            display: none;
+            position: absolute;
+            top: 50px;
+            left: 0;
+            right: 0;
+            background: var(--bg-sidebar);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+            z-index: 999;
+            max-height: 280px;
+            overflow-y: auto;
+            padding: 6px;
+        }
+
+        .search-results-dropdown.show {
+            display: block;
+        }
+
+        .search-category {
+            font-size: 10px;
+            color: var(--text-muted);
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 8px 10px 4px 10px;
+        }
+
+        .search-result-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            color: var(--text-main);
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: background 0.15s;
+        }
+
+        .search-result-item:hover {
+            background-color: var(--hover-sidebar);
+        }
+
+        .menu-item {
+            padding: 10px 14px;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 10px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+
+        .menu-item:hover {
+            background-color: var(--hover-sidebar);
+            color: var(--text-main);
+        }
+
+        .menu-item.active {
+            background-color: rgba(184, 117, 248, 0.18);
+            color: var(--accent);
+            border-left: 4px solid var(--accent);
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 40px 50px;
+            overflow-y: auto;
+            background-color: transparent;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: var(--text-main);
+            margin-bottom: 10px;
+            font-size: 26px;
+            font-weight: 800;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            font-size: 15px;
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 800px;
+            box-shadow: 0 15px 35px 0 rgba(0, 0, 0, 0.35);
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            color: var(--text-main);
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(184, 117, 248, 0.35);
+        }
+
+        button {
+            margin-top: 25px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #b875f8, #9333ea);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(184, 117, 248, 0.35);
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.95;
+            box-shadow: 0 8px 25px rgba(184, 117, 248, 0.55);
+            transform: translateY(-1px);
+        }
+    </style>
+
+    <!-- ESTILOS ORIGINALES Y LIMPIOS PARA LAS NOTIFICACIONES -->
+    <style>
+        .notification-container {
+            position: relative;
+            display: inline-block;
+        }
+        .notification-btn {
+            background: rgba(45, 35, 75, 0.9);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .notification-btn:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 12px rgba(184, 117, 248, 0.4);
+        }
+        .notification-badge {
+            position: absolute;
+            top: 7px;
+            right: 8px;
+            width: 7px;
+            height: 7px;
+            background-color: var(--accent);
+            border-radius: 50%;
+        }
+        .notification-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 48px;
+            width: 320px;
+            background: var(--bg-sidebar);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            padding: 12px;
+            z-index: 1000;
+            text-align: left;
+        }
+        .notification-dropdown.show {
+            display: block;
+        }
+    </style>
+
+    <!-- SOCKET.IO Y LÓGICA EN TIEMPO REAL -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        socket.on('nueva-notificacion', (data) => {
+            const badge = document.querySelector('#notificationBtn span') || document.querySelector('.notification-badge');
+            if (badge) badge.style.display = 'block';
+            setTimeout(() => {
+                location.reload();
+            }, 400);
+        });
+
+        socket.on('borrar-notificacion', (data) => {
+            if (data && data.id) {
+                const item = document.getElementById(`notif-item-${data.id}`);
+                if (item) item.remove();
+                const row = document.getElementById(`row-${data.id}`);
+                if (row) row.remove();
+            } else {
+                location.reload();
+            }
+        });
+
+        function markAsRead() {
+            const badge = document.querySelector('#notificationBtn span') || document.querySelector('.notification-badge');
+            if (badge) badge.style.display = 'none';
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('prem_theme') || 'dark';
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('themeIcon');
+            
+            html.setAttribute('data-theme', savedTheme);
+            if (themeIcon) {
+                themeIcon.className = savedTheme === 'light' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+            }
+        });
+
+        function toggleNotificationMenu() {
+            const menu = document.getElementById('notificationMenu');
+            if (menu) {
+                menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+            }
+        }
+
+        function toggleUserMenu() {
+            const menu = document.getElementById('userDropdownMenu');
+            if (menu) {
+                menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+            }
+        }
+
+        window.addEventListener('click', function(e) {
+            const notifContainer = document.querySelector('.notification-container');
+            const notifMenu = document.getElementById('notificationMenu');
+            if (notifContainer && notifMenu && !notifContainer.contains(e.target)) {
+                notifMenu.style.display = 'none';
+            }
+
+            const container = document.querySelector('.user-dropdown-container');
+            const menu = document.getElementById('userDropdownMenu');
+            if (container && menu && !container.contains(e.target)) {
+                menu.style.display = 'none';
+            }
+        });
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme') || 'dark';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('prem_theme', newTheme);
+            
+            const themeIcon = document.getElementById('themeIcon');
+            if (themeIcon) {
+                themeIcon.className = newTheme === 'light' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+            }
+        }
+    </script>
+</head>
+<body>
+    <!-- BARRA SUPERIOR CON CLASES ORIGINALES PERFECTAMENTE EQUILIBRADAS -->
+    <div style="position: fixed; top: 0; left: 260px; right: 0; height: 60px; background-color: var(--bg-sidebar); border-bottom: 1px solid var(--border); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; gap: 15px; z-index: 99999;">
+        
+        <!-- 1. CAMPANA DE NOTIFICACIONES -->
+        <div class="notification-container">
+            <button class="notification-btn" id="notificationBtn" onclick="toggleNotificationMenu()">
+                <i class="fa-solid fa-bell"></i>
+                <span class="notification-badge" style="display: <%= (typeof historial !== 'undefined' && historial.length > 0) ? 'block' : 'none' %>;"></span>
+            </button>
+
+            <div class="notification-dropdown" id="notificationMenu">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 0 4px;">
+                    <span style="font-size: 12px; font-weight: bold; color: var(--text-main);">📢 Notificaciones Globales</span>
+                    <span style="font-size: 10px; color: var(--accent); cursor: pointer;" onclick="markAsRead()">Marcar leídas</span>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 8px; max-height: 260px; overflow-y: auto; padding-right: 4px;">
+                    <% if (typeof historial !== 'undefined' && historial.length > 0) { %>
+                        <% historial.forEach(item => { %>
+                            <div id="notif-item-<%= item.id %>" style="background: var(--bg-card); padding: 10px; border-radius: 10px; border: 1px solid var(--border);">
+                                <div style="font-size: 12px; font-weight: 700; color: var(--accent);"><%= item.title %></div>
+                                <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;"><%= item.message %></div>
+                                <div style="font-size: 9px; color: var(--text-muted); margin-top: 4px; text-align: right;"><%= item.date %></div>
+                            </div>
+                        <% }) %>
+                    <% } else { %>
+                        <div style="background: var(--bg-card); padding: 10px; border-radius: 10px; border: 1px solid var(--border); text-align: center;">
+                            <div style="font-size: 12px; font-weight: 700; color: var(--accent);">🚀 Sin novedades</div>
+                            <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">No hay notificaciones recientes.</div>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. SELECTOR DE IDIOMAS -->
+        <div class="lang-container">
+            <select class="lang-select" onchange="location.href='?lang=' + this.value">
+                <option value="es" <%= (typeof currentLang !== 'undefined' && currentLang === 'es') ? 'selected' : '' %>>ES Español</option>
+                <option value="en" <%= (typeof currentLang !== 'undefined' && currentLang === 'en') ? 'selected' : '' %>>US English</option>
+                <option value="pt" <%= (typeof currentLang !== 'undefined' && currentLang === 'pt') ? 'selected' : '' %>>BR Português</option>
+                <option value="fr" <%= (typeof currentLang !== 'undefined' && currentLang === 'fr') ? 'selected' : '' %>>FR Français</option>
+                <option value="hi" <%= (typeof currentLang !== 'undefined' && currentLang === 'hi') ? 'selected' : '' %>>IN हिन्दी</option>
+                <option value="ar" <%= (typeof currentLang !== 'undefined' && currentLang === 'ar') ? 'selected' : '' %>>SA العربية</option>
+                <option value="zh" <%= (typeof currentLang !== 'undefined' && currentLang === 'zh') ? 'selected' : '' %>>CN 中文</option>
+            </select>
+        </div>
+
+        <!-- 3. BOTÓN DE TEMA (CLARO / OSCURO) -->
+        <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Cambiar tema">
+            <i class="fa-solid fa-moon" id="themeIcon"></i>
+        </button>
+
+        <!-- 4. PERFIL DE USUARIO Y MENÚ DESPLEGABLE -->
+        <div class="user-dropdown-container" style="position: relative; display: inline-block;">
+            <div onclick="toggleUserMenu()" style="display: flex; align-items: center; gap: 10px; background: rgba(45, 35, 75, 0.9); border: 1px solid var(--border); padding: 6px 14px; border-radius: 30px; cursor: pointer; transition: all 0.2s;">
+                <img src="<%= (typeof user !== 'undefined' && user && user.avatar) ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : 'https://cdn.discordapp.com/embed/avatars/0.png' %>" alt="Avatar" style="width: 28px; height: 28px; border-radius: 50%;">
+                <span style="font-size: 13px; font-weight: 600; color: var(--text-main);"><%= (typeof user !== 'undefined' && user) ? user.username : 'Invitado' %></span>
+                <i class="fa-solid fa-chevron-down" style="font-size: 10px; color: var(--text-muted);"></i>
+            </div>
+
+            <div id="userDropdownMenu" style="display: none; position: absolute; right: 0; top: 52px; width: 250px; max-height: 450px; overflow-y: auto; background: var(--bg-sidebar); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 15px 35px rgba(0,0,0,0.7); padding: 12px; z-index: 1000;">
+                
+                <!-- CABECERA DEL MENÚ -->
+                <div style="padding: 6px 10px 10px 10px; border-bottom: 1px solid var(--border); margin-bottom: 8px;">
+                    <div style="font-size: 14px; font-weight: 700; color: var(--text-main);"><%= (typeof user !== 'undefined' && user) ? user.username : 'Usuario' %></div>
+                    <div style="font-size: 11px; color: var(--text-muted);">@<%= (typeof user !== 'undefined' && user && user.username) ? user.username.toLowerCase() : 'usuario' %></div>
+                </div>
+
+                <!-- OPCIONES DE NAVEGACIÓN -->
+                <a href="/dashboard" style="display: flex; align-items: center; gap: 10px; padding: 10px; color: var(--text-main); text-decoration: none; font-size: 13px; font-weight: 600; border-radius: 8px; transition: background 0.15s;">
+                    <i class="fa-solid fa-server" style="color: var(--accent);"></i> Mis servidores
+                </a>
+                <a href="#" onclick="toggleTheme(); toggleUserMenu(); return false;" style="display: flex; align-items: center; gap: 10px; padding: 10px; color: var(--text-main); text-decoration: none; font-size: 13px; font-weight: 600; border-radius: 8px; transition: background 0.15s;">
+                    <i class="fa-solid fa-moon" style="color: var(--accent);"></i> Preferencias / Tema
+                </a>
+
+                <div style="font-size: 10px; color: var(--text-muted); font-weight: bold; text-transform: uppercase; padding: 10px 10px 4px 10px; letter-spacing: 0.5px;">Gestión de PREM Bot</div>
+                <a href="/dashboard/custom-bot" style="display: flex; align-items: center; gap: 10px; padding: 10px; color: var(--text-main); text-decoration: none; font-size: 13px; font-weight: 600; border-radius: 8px; transition: background 0.15s;">
+                    <i class="fa-solid fa-robot" style="color: var(--accent);"></i> Personalización de Bot
+                </a>
+                <a href="/dashboard/custom-commands" style="display: flex; align-items: center; justify-content: space-between; padding: 10px; color: var(--text-main); text-decoration: none; font-size: 13px; font-weight: 600; border-radius: 8px; transition: background 0.15s;">
+                    <div style="display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-code" style="color: var(--accent);"></i> Comandos personalizados</div>
+                    <span style="background: linear-gradient(135deg, #fbbf24, #d97706); color: #000; font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 4px; box-shadow: 0 0 8px rgba(251, 191, 36, 0.6);">PREMIUM</span>
+                </a>
+
+                <!-- OPCIÓN EXCLUSIVA DE CREADORA PARA ENVIAR NOTIFICACIONES -->
+                <% if (typeof user !== 'undefined' && user && user.id === '931545363565908041') { %>
+                    <a href="/dashboard/admin/notificaciones" style="display: flex; align-items: center; gap: 10px; padding: 10px; color: var(--accent); text-decoration: none; font-size: 13px; font-weight: 700; border-radius: 8px; background: rgba(184, 117, 248, 0.12); transition: background 0.15s; margin-top: 4px; border: 1px solid var(--border);">
+                        <i class="fa-solid fa-bullhorn" style="color: var(--accent);"></i> Enviar Notificaciones
+                    </a>
+                <% } %>
+
+                <div style="font-size: 10px; color: var(--text-muted); font-weight: bold; text-transform: uppercase; padding: 10px 10px 4px 10px; letter-spacing: 0.5px;">Comunidad</div>
+                <a href="https://discord.gg" target="_blank" style="display: flex; align-items: center; gap: 10px; padding: 10px; color: var(--text-main); text-decoration: none; font-size: 13px; font-weight: 600; border-radius: 8px; transition: background 0.15s;">
+                    <i class="fa-brands fa-discord" style="color: #5865F2;"></i> Servidor de Soporte
+                </a>
+                <a href="/documentacion" style="display: flex; align-items: center; gap: 10px; padding: 10px; color: var(--text-main); text-decoration: none; font-size: 13px; font-weight: 600; border-radius: 8px; transition: background 0.15s;">
+                    <i class="fa-solid fa-book" style="color: var(--accent);"></i> Documentación / Guías
+                </a>
+                <a href="#" style="display: flex; align-items: center; gap: 10px; padding: 10px; color: var(--text-main); text-decoration: none; font-size: 13px; font-weight: 600; border-radius: 8px; transition: background 0.15s;">
+                    <i class="fa-solid fa-star" style="color: #fbbf24;"></i> Votar por el bot
+                </a>
+
+                <!-- ESTADO DE LA API Y VERSIÓN -->
+                <div style="border-top: 1px solid var(--border); margin-top: 8px; padding-top: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 10px; font-size: 11px;">
+                        <span style="color: var(--text-muted); display: flex; align-items: center; gap: 6px;"><span style="width: 7px; height: 7px; background-color: var(--success); border-radius: 50%;"></span> Estado de la API</span>
+                        <span style="color: var(--success); font-weight: 700;">Operational</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 10px; font-size: 11px;">
+                        <span style="color: var(--text-muted);">Versión actual</span>
+                        <span style="color: var(--text-main); font-weight: 700;">PREM Bot v2.5</span>
+                    </div>
+                </div>
+
+                <!-- CERRAR SESIÓN -->
+                <div style="border-top: 1px solid var(--border); margin-top: 8px; padding-top: 8px;">
+                    <a href="/auth/logout" style="display: flex; align-items: center; gap: 10px; padding: 10px; color: #ef4444; text-decoration: none; font-size: 13px; font-weight: 600; border-radius: 8px; transition: background 0.15s;">
+                        <i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

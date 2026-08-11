@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="<%= typeof lang !== 'undefined' ? lang : 'es' %>" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PREM - Select Server</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-gradient: radial-gradient(circle at 50% 0%, #4c1d95, #1e1b4b, #09090b);
+            --card-bg: rgba(20, 18, 35, 0.65);
+            --bg-sidebar: #12101f;
+            --hover-sidebar: rgba(255, 255, 255, 0.05);
+            --text-color: #ffffff;
+            --text-main: #ffffff;
+            --text-muted: #a78bfa;
+            --accent-color: #c084fc;
+            --accent-glow: rgba(192, 132, 252, 0.4);
+            --border-color: rgba(192, 132, 252, 0.15);
+            --border: rgba(192, 132, 252, 0.15);
+            --nav-bg: rgba(15, 12, 28, 0.8);
+            --shimmer-color: rgba(255, 255, 255, 0.25);
+        }
+
+        [data-theme="light"] {
+            --bg-gradient: radial-gradient(circle at 50% 0%, #e9d5ff, #f3e8ff, #ffffff);
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --bg-sidebar: #f8fafc;
+            --hover-sidebar: rgba(0, 0, 0, 0.05);
+            --text-color: #1e1b4b;
+            --text-main: #1e1b4b;
+            --text-muted: #6b21a8;
+            --accent-color: #9333ea;
+            --accent-glow: rgba(147, 51, 234, 0.25);
+            --border-color: rgba(147, 51, 234, 0.2);
+            --border: rgba(147, 51, 234, 0.2);
+            --nav-bg: rgba(255, 255, 255, 0.9);
+            --shimmer-color: rgba(75, 85, 99, 0.35);
+        }
+
+        body {
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-color);
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background-color: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+            z-index: 1000;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+            color: var(--text-color);
+        }
+
+        .bot-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 0 15px rgba(192, 132, 252, 0.7);
+            border: 2px solid var(--accent-color);
+        }
+
+        .bot-name {
+            font-weight: 800;
+            font-size: 1.4rem;
+            letter-spacing: 0.5px;
+            background: linear-gradient(45deg, var(--text-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 6px 16px;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .theme-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+
+        .theme-btn:hover {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 25px;
+            flex: 1;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin: 0 0 10px 0;
+            letter-spacing: -1px;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+        }
+
+        .search-container {
+            margin-bottom: 40px;
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 500px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 14px 20px;
+            border-radius: 14px;
+            color: var(--text-color);
+            font-size: 1rem;
+            outline: none;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+            opacity: 0.7;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .guilds-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .guild-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 20px;
+            backdrop-filter: blur(15px);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+        }
+
+        .guild-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -100%;
+            width: 50%;
+            height: 200%;
+            background: linear-gradient(
+                to right,
+                transparent,
+                var(--shimmer-color),
+                transparent
+            );
+            transform: rotate(30deg);
+            transition: 0.8s ease;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .guild-card:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-6px);
+            box-shadow: 0 15px 35px var(--accent-glow);
+        }
+
+        .guild-card:hover::before {
+            left: 120%;
+            opacity: 1;
+        }
+
+        .guild-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .guild-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-color);
+            background: var(--card-bg);
+        }
+
+        .guild-details h3 {
+            margin: 0 0 5px 0;
+            font-size: 1.1rem;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 170px;
+        }
+
+        .guild-role {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .btn-manage {
+            background: linear-gradient(135deg, #a855f7, var(--accent-color));
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            padding: 10px;
+            border-radius: 12px;
+            font-weight: 700;
+            box-shadow: 0 4px 15px var(--accent-glow);
+            transition: all 0.3s ease;
+            display: block;
+        }
+
+        .btn-manage:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--accent-glow);
+            filter: brightness(1.1);
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border-color);
+            background-color: var(--nav-bg);
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="/?lang=<%= typeof lang !== 'undefined' ? lang : 'es' %>" class="nav-left">
+            <img src="https://cdn.discordapp.com/avatars/1534632950224781548/a_678d6b7de1507542e3636f611d297e20.gif?size=2048" alt="Bot Avatar" class="bot-avatar">
+            <span class="bot-name">PREM</span>
+        </a>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            
+            <!-- CAMPANA DE NOTIFICACIONES (A la izquierda del selector de idioma) -->
+            <div class="notification-container" style="position: relative; display: inline-block; z-index: 10000;">
+                <button onclick="toggleNotificationMenu()" id="notificationBtn" style="background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-color); width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(10px); transition: all 0.3s ease; position: relative;" title="Notificaciones">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                    </svg>
+                    <span style="position: absolute; top: 8px; right: 9px; width: 8px; height: 8px; background-color: var(--accent-color); border-radius: 50%; box-shadow: 0 0 8px var(--accent-color);"></span>
+                </button>
+                
+                <div id="notificationMenu" style="display: none; position: absolute; right: 0; top: 115%; width: 280px; background: var(--nav-bg); backdrop-filter: blur(20px); border: 1px solid var(--border-color); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); padding: 12px; z-index: 99999; text-align: left;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-bottom: 8px;">
+                        <span style="font-weight: 700; font-size: 13px; color: var(--text-color);">🔔 Notificaciones</span>
+                        <span style="font-size: 11px; color: var(--text-muted); cursor: pointer;" onclick="markAsRead()">Marcar leídas</span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <div style="background: var(--card-bg); padding: 10px; border-radius: 10px; border: 1px solid var(--border-color);">
+                            <div style="font-size: 12px; font-weight: 700; color: var(--accent-color);">🚀 Actualización PREM</div>
+                            <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Nuevas opciones de personalización ya disponibles.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lang-dropdown" style="position: relative; display: inline-block; z-index: 10000;">
+                <button onclick="toggleLangMenu()" style="background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-color); padding: 8px 16px; border-radius: 20px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(10px); transition: all 0.3s ease;">
+                    <% 
+                        let flag = '🇪🇸'; let langName = 'Español';
+                        const currentLang = typeof lang !== 'undefined' ? lang : 'es';
+                        if (currentLang === 'en') { flag = '🇺🇸'; langName = 'English'; }
+                        else if (currentLang === 'pt') { flag = '🇧🇷'; langName = 'Português'; }
+                        else if (currentLang === 'fr') { flag = '🇫🇷'; langName = 'Français'; }
+                        else if (currentLang === 'hi') { flag = '🇮🇳'; langName = 'हिन्दी'; }
+                        else if (currentLang === 'ar') { flag = '🇸🇦'; langName = 'العربية'; }
+                        else if (currentLang === 'zh') { flag = '🇨🇳'; langName = '中文'; }
+                    %>
+                    <span style="font-size: 1.1rem;"><%= flag %></span>
+                    <span><%= langName %></span>
+                    <i class="fa-solid fa-chevron-down" style="font-size: 0.8rem; margin-left: 4px;"></i>
+                </button>
+                <div id="langMenu" style="display: none; position: absolute; right: 0; top: 115%; background: var(--nav-bg); backdrop-filter: blur(20px); border: 1px solid var(--border-color); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); overflow: hidden; z-index: 99999; min-width: 170px;">
+                    <a href="/dashboard?lang=es" style="display: flex; align-items: center; gap: 12px; padding: 10px 16px; color: var(--text-color); text-decoration: none; font-size: 0.9rem; transition: background 0.2s;"><span style="font-size: 1.1rem;">🇪🇸</span> Español</a>
+                    <a href="/dashboard?lang=en" style="display: flex; align-items: center; gap: 12px; padding: 10px 16px; color: var(--text-color); text-decoration: none; font-size: 0.9rem; transition: background 0.2s;"><span style="font-size: 1.1rem;">🇺🇸</span> English</a>
+                    <a href="/dashboard?lang=pt" style="display: flex; align-items: center; gap: 12px; padding: 10px 16px; color: var(--text-color); text-decoration: none; font-size: 0.9rem; transition: background 0.2s;"><span style="font-size: 1.1rem;">🇧🇷</span> Português</a>
+                    <a href="/dashboard?lang=fr" style="display: flex; align-items: center; gap: 12px; padding: 10px 16px; color: var(--text-color); text-decoration: none; font-size: 0.9rem; transition: background 0.2s;"><span style="font-size: 1.1rem;">🇫🇷</span> Français</a>
+                    <a href="/dashboard?lang=hi" style="display: flex; align-items: center; gap: 12px; padding: 10px 16px; color: var(--text-color); text-decoration: none; font-size: 0.9rem; transition: background 0.2s;"><span style="font-size: 1.1rem;">🇮🇳</span> हिन्दी</a>
+                    <a href="/dashboard?lang=ar" style="display: flex; align-items: center; gap: 12px; padding: 10px 16px; color: var(--text-color); text-decoration: none; font-size: 0.9rem; transition: background 0.2s;"><span style="font-size: 1.1rem;">🇸🇦</span> العربية</a>
+                    <a href="/dashboard?lang=zh" style="display: flex; align-items: center; gap: 12px; padding: 10px 16px; color: var(--text-color); text-decoration: none; font-size: 0.9rem; transition: background 0.2s;"><span style="font-size: 1.1rem;">🇨🇳</span> 中文</a>
+                </div>
+            </div>
+
+            <button class="theme-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Cambiar tono de pantalla">
+                <i class="fa-solid fa-moon" id="themeIcon"></i>
+            </button>
+
+            <!-- PERFIL DE USUARIO CON MENÚ DESPLEGABLE -->
+            <% if (typeof user !== 'undefined' && user) { %>
+                <div class="user-dropdown-container" style="position: relative; display: inline-block;">
+                    <div onclick="toggleUserMenu()" class="user-profile">
+                        <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png" alt="Avatar" class="user-avatar">
+                        <span style="font-weight: 600; font-size: 0.95rem; color: var(--text-main);"><%= user.global_name || user.username %></span>
+                        <i class="fa-solid fa-chevron-down" style="font-size: 11px; color: var(--text-muted); margin-left: 2px;"></i>
+                    </div>
+
+                    <!-- Menú Desplegable Flotante -->
+                    <div id="userDropdownMenu" style="display: none; position: absolute; right: 0; top: 50px; width: 260px; background: var(--bg-sidebar); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; padding: 8px; backdrop-filter: blur(20px);">
+                        
+                        <!-- CABECERA: CUENTA -->
+                        <div style="padding: 10px 12px; border-bottom: 1px solid var(--border); margin-bottom: 6px;">
+                            <div style="font-weight: 700; font-size: 14px; color: var(--text-main);"><%= user.global_name || user.username %></div>
+                            <div style="font-size: 12px; color: var(--text-muted);">@<%= user.username %></div>
+                        </div>
+
+                        <a href="/dashboard" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'">
+                            <i class="fa-solid fa-server" style="width: 16px; color: var(--text-muted);"></i> Mis servidores
+                        </a>
+
+                        <a href="#" onclick="toggleTheme(); return false;" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'">
+                            <i class="fa-solid fa-circle-half-stroke" style="width: 16px; color: var(--text-muted);"></i> Preferencias / Tema
+                        </a>
+
+                        <!-- SECCIÓN: GESTIÓN DEL BOT -->
+                        <div style="font-size: 10px; color: var(--text-muted); font-weight: bold; margin: 8px 12px 4px 12px; text-transform: uppercase;">Gestión de PREM Bot</div>
+
+                        <a href="/dashboard/custom-bot" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'">
+                            <i class="fa-solid fa-robot" style="width: 16px; color: var(--text-muted);"></i> Personalización de Bot
+                        </a>
+
+                        <a href="/dashboard/custom-commands" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px; transition: background 0.2s;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'">
+                            <i class="fa-solid fa-code" style="width: 16px; color: #facc15; text-shadow: 0 0 10px rgba(250,204,21,0.7);"></i> Comandos personalizados 
+                            <span style="margin-left: auto; background: linear-gradient(135deg, #ffffff, #fef08a, #facc15); color: #713f12; font-size: 9px; padding: 3px 8px; border-radius: 6px; font-weight: 800; letter-spacing: 0.5px; box-shadow: 0 0 15px rgba(253,224,71,0.8); text-transform: uppercase; border: 1px solid rgba(250,204,21,0.5);">PREMIUM</span>
+                        </a>
+
+                        <!-- SECCIÓN: COMUNIDAD Y AYUDA -->
+                        <div style="font-size: 10px; color: var(--text-muted); font-weight: bold; margin: 8px 12px 4px 12px; text-transform: uppercase;">Comunidad</div>
+
+                        <a href="https://discord.gg/tu-servidor-soporte" target="_blank" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'">
+                            <i class="fa-brands fa-discord" style="width: 16px; color: #5865F2;"></i> Servidor de Soporte
+                        </a>
+
+                        <!-- ENLACE ACTUALIZADO A DOCUMENTACIÓN -->
+                        <a href="/documentacion" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'">
+                            <i class="fa-solid fa-book" style="width: 16px; color: var(--text-muted);"></i> Documentación / Guías
+                        </a>
+
+                        <a href="#" target="_blank" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'">
+                            <i class="fa-solid fa-star" style="width: 16px; color: #eab308;"></i> Votar por el bot
+                        </a>
+
+                        <!-- SECCIÓN: ESTADO DEL SISTEMA -->
+                        <div style="border-top: 1px solid var(--border); margin-top: 6px; padding-top: 6px;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 6px 12px; font-size: 12px; color: var(--text-muted);">
+                                <span style="display: flex; align-items: center; gap: 6px;">
+                                    <span style="width: 8px; height: 8px; background-color: #22c55e; border-radius: 50%; display: inline-block; box-shadow: 0 0 8px #22c55e;"></span> Estado de la API
+                                </span>
+                                <span style="color: #22c55e; font-weight: 600; font-size: 11px;">Operational</span>
+                            </div>
+                            <div style="padding: 2px 12px 6px 12px; font-size: 11px; color: var(--text-muted); display: flex; justify-content: space-between;">
+                                <span>Versión actual</span>
+                                <span style="font-weight: 600; color: var(--text-main);">PREM Bot v2.5</span>
+                            </div>
+                        </div>
+
+                        <!-- ACCIÓN DE SESIÓN (LOGOUT) -->
+                        <div style="border-top: 1px solid var(--border); margin-top: 4px; padding-top: 4px;">
+                            <a href="/logout" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: #ef4444; text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='rgba(239,68,68,0.1)'" onmouseout="this.style.background='transparent'">
+                                <i class="fa-solid fa-arrow-right-from-bracket" style="width: 16px;"></i> Cerrar sesión
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>
+            <% if (currentLang === 'en') { %>Select a server<% } 
+            else if (currentLang === 'pt') { %>Selecione um servidor<% } 
+            else if (currentLang === 'fr') { %>Sélectionnez un serveur<% } 
+            else if (currentLang === 'hi') { %>एक सर्वर चुनें<% } 
+            else if (currentLang === 'ar') { %>حدد خادمًا<% } 
+            else if (currentLang === 'zh') { %>选择服务器<% } 
+            else { %>Selecciona un servidor<% } %>
+        </h1>
+        <p class="subtitle">
+            <% if (currentLang === 'en') { %>Choose a server to manage or invite the bot.<% } 
+            else if (currentLang === 'pt') { %>Escolha um servidor para gerenciar ou convidar o bot.<% } 
+            else if (currentLang === 'fr') { %>Choisissez un serveur à gérer ou invitez le bot.<% } 
+            else if (currentLang === 'hi') { %>प्रबंधित करने या बॉट को आमंत्रित करने के लिए एक सर्वर चुनें।<% } 
+            else if (currentLang === 'ar') { %>اختر خادمًا لإدارته أو دعوة البوت.<% } 
+            else if (currentLang === 'zh') { %>选择要管理或邀请机器人的服务器。<% } 
+            else { %>Elige un servidor para administrar o invitar al bot<% } %>
+        </p>
+
+        <div class="search-container">
+            <input type="text" id="serverSearch" class="search-input" placeholder="<%= currentLang === 'en' ? 'Search servers by name...' : currentLang === 'pt' ? 'Pesquisar servidores por nome...' : currentLang === 'fr' ? 'Rechercher des serveurs par nom...' : currentLang === 'hi' ? 'नाम से servidores खोजें...' : currentLang === 'ar' ? 'بحث عن الخوادم بالاسم...' : currentLang === 'zh' ? '按名称搜索服务器...' : 'Buscar servidores por nombre...' %>">
+        </div>
+
+        <div class="guilds-grid" id="guildsGrid">
+            <% guilds.forEach(guild => { %>
+                <div class="guild-card" data-name="<%= guild.name.toLowerCase() %>">
+                    <div class="guild-info">
+                        <% if (guild.icon) { %>
+                            <img src="https://cdn.discordapp.com/icons/<%= guild.id %>/<%= guild.icon %>.png" alt="Icon" class="guild-icon">
+                        <% } else { %>
+                            <div class="guild-icon" style="display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; color: var(--accent-color);">
+                                <%= guild.name.charAt(0) %>
+                            </div>
+                        <% } %>
+                        <div class="guild-details">
+                            <h3 title="<%= guild.name %>"><%= guild.name %></h3>
+                            <span class="guild-role">
+                                <% if (guild.owner) { %>
+                                    <% if (currentLang === 'en') { %>Owner<% } else if (currentLang === 'pt') { %>Dono<% } else if (currentLang === 'fr') { %>Propriétaire<% } else if (currentLang === 'hi') { %>मालक<% } else if (currentLang === 'ar') { %>مالك<% } else if (currentLang === 'zh') { %>所有者<% } else { %>Propietario<% } %>
+                                <% } else { %>
+                                    <% if (currentLang === 'en') { %>Administrator<% } else if (currentLang === 'pt') { %>Administrador<% } else if (currentLang === 'fr') { %>Administrateur<% } else if (currentLang === 'hi') { %>प्रशासक<% } else if (currentLang === 'ar') { %>مدير<% } else if (currentLang === 'zh') { %>管理员<% } else { %>Administrador<% } %>
+                                <% } %>
+                            </span>
+                        </div>
+                    </div>
+                    <% if (guild.botInGuild) { %>
+                        <a href="/dashboard/<%= guild.id %>?lang=<%= currentLang %>" class="btn-manage">
+                            <% if (currentLang === 'en') { %>Manage<% } else if (currentLang === 'pt') { %>Gerenciar<% } else if (currentLang === 'fr') { %>Gérer<% } else if (currentLang === 'hi') { %>प्रबंध करें<% } else if (currentLang === 'ar') { %>إدارة<% } else if (currentLang === 'zh') { %>管理<% } else { %>Gestionar<% } %>
+                        </a>
+                    <% } else { %>
+                        <a href="https://discord.com/oauth2/authorize?client_id=1534632950224781548&scope=bot&permissions=8&guild_id=<%= guild.id %>" target="_blank" class="btn-manage" style="background: rgba(192, 132, 252, 0.15); border: 1px solid var(--border-color);">
+                            <% if (currentLang === 'en') { %>Invite<% } else if (currentLang === 'pt') { %>Convidar<% } else if (currentLang === 'fr') { %>Inviter<% } else if (currentLang === 'hi') { %>आमंत्रित करें<% } else if (currentLang === 'ar') { %>دعوة<% } else if (currentLang === 'zh') { %>邀请<% } else { %>Invitar<% } %>
+                        </a>
+                    <% } %>
+                </div>
+            <% }) %>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 PREM Bot. 
+            <% if (currentLang === 'en') { %>All rights reserved.<% } 
+            else if (currentLang === 'pt') { %>Todos os direitos reservados.<% } 
+            else if (currentLang === 'fr') { %>Tous droits réservés.<% } 
+            else if (currentLang === 'hi') { %>सभी अधिकार सुरक्षित।<% } 
+            else if (currentLang === 'ar') { %>جميع الحقوق محفوظة.<% } 
+            else if (currentLang === 'zh') { %>版权所有。<% } 
+            else { %>Todos los derechos reservados.<% } %>
+        </p>
+    </footer>
+
+    <script>
+        function toggleLangMenu() {
+            const menu = document.getElementById('langMenu');
+            if (menu) menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function toggleNotificationMenu() {
+            const menu = document.getElementById('notificationMenu');
+            if (menu) menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function markAsRead() {
+            const badge = document.querySelector('#notificationBtn span');
+            if (badge) badge.style.display = 'none';
+        }
+
+        function toggleUserMenu() {
+            const menu = document.getElementById('userDropdownMenu');
+            if (menu) {
+                menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+            }
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('themeIcon');
+            const currentTheme = html.getAttribute('data-theme');
+
+            if (currentTheme === 'light') {
+                html.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fa-solid fa-moon';
+                localStorage.setItem('prem_theme', 'dark');
+            } else {
+                html.setAttribute('data-theme', 'light');
+                themeIcon.className = 'fa-solid fa-sun';
+                localStorage.setItem('prem_theme', 'light');
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('prem_theme') || 'dark';
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('themeIcon');
+            
+            html.setAttribute('data-theme', savedTheme);
+            if (savedTheme === 'light') {
+                themeIcon.className = 'fa-solid fa-sun';
+            } else {
+                themeIcon.className = 'fa-solid fa-moon';
+            }
+        });
+
+        window.onclick = function(event) {
+            if (!event.target.closest('.notification-container')) {
+                const menu = document.getElementById('notificationMenu');
+                if (menu) menu.style.display = 'none';
+            }
+            if (!event.target.closest('.lang-dropdown')) {
+                const menu = document.getElementById('langMenu');
+                if (menu) menu.style.display = 'none';
+            }
+            if (!event.target.closest('.user-dropdown-container')) {
+                const userMenu = document.getElementById('userDropdownMenu');
+                if (userMenu) userMenu.style.display = 'none';
+            }
+        }
+
+        const searchInput = document.getElementById('serverSearch');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                const cards = document.querySelectorAll('.guild-card');
+                cards.forEach(card => {
+                    const name = card.getAttribute('data-name');
+                    if (name.includes(term)) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+</html>

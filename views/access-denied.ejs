@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Acceso Denegado</title>
+    <style>
+        body { background-color: #0f0f13; color: #fff; font-family: Arial, sans-serif; text-align: center; padding-top: 100px; }
+        .container { max-width: 600px; margin: 0 auto; background: #18181b; padding: 40px; border-radius: 12px; border: 1px solid #27272a; }
+        h1 { color: #f43f5e; font-size: 2.5rem; }
+        p { color: #a1a1aa; line-height: 1.5; text-align: left; }
+        .box { background: rgba(244, 63, 94, 0.05); border: 1px solid rgba(244, 63, 94, 0.2); padding: 20px; border-radius: 8px; text-align: left; margin: 20px 0; }
+        .box ol { color: #a1a1aa; text-align: left; padding-left: 20px; line-height: 1.6; }
+        .btn { display: inline-block; padding: 10px 20px; margin: 10px; border-radius: 6px; text-decoration: none; font-weight: bold; cursor: pointer; }
+        .btn-primary { background: #f43f5e; color: white; }
+        .btn-secondary { background: #27272a; color: white; border: 1px solid #3f3f46; }
+        .btn-secondary:hover { background: #3f3f46; }
+        .btn-primary:hover { background: #e11d48; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Acceso Denegado</h1>
+        <div class="box">
+            <h3>¿Estás usando la cuenta correcta de Discord?</h3>
+            <p>Este error suele ocurrir cuando intentas acceder a la configuración del servidor con una cuenta de Discord diferente a la que tiene los permisos necesarios.</p>
+            <p><strong>Para solucionarlo:</strong></p>
+            <ol>
+                <li>Verifica que estás usando la cuenta de Discord correcta.</li>
+                <li>Asegúrate de tener el permiso de Administrador o Gestionar Servidor.</li>
+                <li>Si crees que esto es un error, verifica tu sesión.</li>
+            </ol>
+        </div>
+        <a href="/auth/discord?prompt=consent" class="btn btn-secondary">Cambiar Cuenta</a>
+        <a href="/dashboard" class="btn btn-primary">Volver al Inicio</a>
+    </div>
+</body>
+</html>

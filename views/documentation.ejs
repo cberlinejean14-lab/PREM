@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentación Oficial - PREM Bot</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-main: #05070f;
+            --bg-card: rgba(13, 17, 28, 0.8);
+            --border-glow: rgba(168, 85, 247, 0.35);
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --accent-glow: #c084fc;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            color: var(--text-main);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            position: relative;
+        }
+
+        .ambient-light-1 {
+            position: fixed;
+            top: 50px;
+            left: -100px;
+            width: 400px;
+            height: 400px;
+            background: rgba(168, 85, 247, 0.12);
+            filter: blur(120px);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .ambient-light-2 {
+            position: fixed;
+            bottom: 50px;
+            right: -100px;
+            width: 450px;
+            height: 450px;
+            background: rgba(99, 102, 241, 0.1);
+            filter: blur(140px);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .doc-layout {
+            display: flex;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 50px 24px;
+            gap: 45px;
+        }
+
+        /* Sidebar con Buscador y Enlaces */
+        .doc-sidebar {
+            width: 280px;
+            flex-shrink: 0;
+            position: sticky;
+            top: 110px;
+            height: calc(100vh - 140px);
+            overflow-y: auto;
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(168, 85, 247, 0.15);
+            border-radius: 20px;
+            padding: 22px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .doc-search-box {
+            position: relative;
+            margin-bottom: 5px;
+        }
+
+        .doc-search-box input {
+            width: 100%;
+            background: rgba(5, 7, 15, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 10px 12px 10px 35px;
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+            transition: all 0.3s;
+            box-sizing: border-box;
+        }
+
+        .doc-search-box input:focus {
+            border-color: #c084fc;
+            box-shadow: 0 0 10px rgba(192, 132, 252, 0.2);
+        }
+
+        .doc-search-box i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .doc-sidebar-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--accent-glow);
+            letter-spacing: 1.5px;
+            font-weight: 800;
+            padding-left: 5px;
+        }
+
+        .doc-sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .doc-sidebar li {
+            margin-bottom: 6px;
+        }
+
+        .doc-sidebar a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 13.5px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .doc-sidebar a:hover {
+            color: #ffffff;
+            background: rgba(168, 85, 247, 0.15);
+            transform: translateX(6px);
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.2);
+        }
+
+        /* Contenido principal */
+        .doc-content {
+            flex-grow: 1;
+            max-width: 860px;
+        }
+
+        .doc-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 35px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .doc-card:hover {
+            border-color: var(--border-glow);
+            box-shadow: 0 20px 45px rgba(168, 85, 247, 0.15);
+        }
+
+        .doc-card h2 {
+            font-size: 22px;
+            color: #ffffff;
+            margin-top: 0;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 15px;
+        }
+
+        .doc-card h3 {
+            font-size: 15px;
+            color: #e879f9;
+            margin-top: 24px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .doc-card p, .doc-card li {
+            color: var(--text-muted);
+            font-size: 14.5px;
+            line-height: 1.7;
+        }
+
+        .doc-card ul, .doc-card ol {
+            padding-left: 20px;
+        }
+
+        .doc-card li {
+            margin-bottom: 10px;
+        }
+
+        /* Contenedor de Código con botón de Copiar integrado */
+        .code-snippet-box {
+            position: relative;
+            background: #05070f;
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin: 12px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .code-snippet-box code {
+            color: #f0abfc;
+            font-family: 'Fira Code', monospace;
+            font-size: 13.5px;
+            background: transparent;
+            border: none;
+            padding: 0;
+        }
+
+        .copy-btn {
+            background: rgba(168, 85, 247, 0.15);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            color: #e879f9;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .copy-btn:hover {
+            background: rgba(168, 85, 247, 0.3);
+            color: #fff;
+        }
+
+        @media (max-width: 900px) {
+            .doc-layout {
+                flex-direction: column;
+                padding: 20px;
+            }
+            .doc-sidebar {
+                position: static;
+                height: auto;
+                width: 100%;
+                margin-bottom: 25px;
+                box-sizing: border-box;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-light-1"></div>
+    <div class="ambient-light-2"></div>
+
+    <!-- BARRA SUPERIOR -->
+    <header class="top-navbar" style="display: flex; justify-content: space-between; align-items: center; padding: 0 35px; height: 80px; background: rgba(5, 7, 15, 0.85); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255,255,255,0.08); position: sticky; top: 0; z-index: 1000;">
+        <div style="font-weight: 800; font-size: 18px; color: #fff;">
+            <a href="/dashboard" style="color: inherit; text-decoration: none; display: flex; align-items: center; gap: 12px;">
+                <div style="width: 42px; height: 42px; border-radius: 50%; padding: 2px; background: linear-gradient(135deg, #c084fc, #9333ea); box-shadow: 0 0 15px rgba(192, 132, 252, 0.5); display: flex; align-items: center; justify-content: center;">
+                    <img src="https://cdn.discordapp.com/avatars/1534632950224781548/a_678d6b7de1507542e3636f611d297e20.gif?size=2048" alt="PREM Bot Logo" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                </div>
+                <span style="color: #c084fc; letter-spacing: 0.5px; font-size: 20px;">PREM</span>
+            </a>
+        </div>
+        
+        <div style="display: flex; align-items: center; gap: 16px; margin-left: auto;">
+            
+            <!-- CAMPANA DE NOTIFICACIONES -->
+            <div class="notification-container" style="position: relative; display: inline-block; z-index: 10000;">
+                <button onclick="toggleNotificationMenu()" id="notificationBtn" style="background: #0d111c; border: 1px solid rgba(255,255,255,0.12); color: #fff; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; position: relative;" title="Notificaciones">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                    </svg>
+                    <span style="position: absolute; top: 7px; right: 8px; width: 8px; height: 8px; background-color: #c084fc; border-radius: 50%; box-shadow: 0 0 8px #c084fc;"></span>
+                </button>
+                
+                <div id="notificationMenu" style="display: none; position: absolute; right: 0; top: 115%; width: 280px; background: #0d111c; border: 1px solid rgba(255,255,255,0.12); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); padding: 12px; z-index: 99999; text-align: left; backdrop-filter: blur(20px);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; margin-bottom: 8px;">
+                        <span style="font-weight: 700; font-size: 13px; color: #fff;">🔔 Notificaciones</span>
+                        <span style="font-size: 11px; color: var(--text-muted); cursor: pointer;" onclick="markAsRead()">Marcar leídas</span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.06);">
+                            <div style="font-size: 12px; font-weight: 700; color: #c084fc;">🚀 Actualización PREM</div>
+                            <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Nuevas opciones de personalización ya disponibles.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <select class="lang-select" id="langSelector" onchange="location = this.value;" style="background: #0d111c; color: #fff; border: 1px solid rgba(255,255,255,0.12); border-radius: 30px; padding: 8px 16px; outline: none; cursor: pointer; font-size: 13px;">
+                <option value="?lang=es" <%= lang === 'es' ? 'selected' : '' %>>🇪🇸 Español</option>
+                <option value="?lang=en" <%= lang === 'en' ? 'selected' : '' %>>🇺🇸 English</option>
+            </select>
+
+            <button onclick="toggleTheme()" id="themeBtn" title="Cambiar tema" style="background: #0d111c; border: 1px solid rgba(255,255,255,0.12); color: #fff; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px;">
+                <i class="fa-solid fa-moon" id="themeIcon"></i>
+            </button>
+
+            <% if (typeof user !== 'undefined' && user) { %>
+                <div class="user-dropdown-container" style="position: relative; display: inline-block;">
+                    <div onclick="toggleUserMenu()" class="user-profile" style="display: flex; align-items: center; gap: 10px; background: #0d111c; padding: 6px 16px 6px 6px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.12); cursor: pointer;">
+                        <div style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #5865F2;">
+                            <% if (user.avatar) { %>
+                                <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+                            <% } else { %>
+                                <img src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+                            <% } %>
+                        </div>
+                        <span style="font-size: 14px; font-weight: 600; color: #fff;"><%= user.global_name || user.username %></span>
+                        <i class="fa-solid fa-chevron-down" style="font-size: 10px; color: var(--text-muted);"></i>
+                    </div>
+
+                    <div id="userDropdownMenu" style="display: none; position: absolute; right: 0; top: 55px; width: 220px; background: #0d111c; border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); z-index: 10000; padding: 8px;">
+                        <a href="/dashboard" style="display: flex; align-items: center; gap: 10px; padding: 10px; color: #fff; text-decoration: none; border-radius: 10px; font-size: 13px;"><i class="fa-solid fa-server" style="width: 16px; color: #c084fc;"></i> Mis servidores</a>
+                        <a href="/documentacion" style="display: flex; align-items: center; gap: 10px; padding: 10px; color: #fff; text-decoration: none; border-radius: 10px; font-size: 13px;"><i class="fa-solid fa-book" style="width: 16px; color: #c084fc;"></i> Documentación</a>
+                        <div style="border-top: 1px solid rgba(255,255,255,0.08); margin-top: 4px; padding-top: 4px;">
+                            <a href="/auth/logout" style="display: flex; align-items: center; gap: 10px; padding: 10px; color: #ef4444; text-decoration: none; border-radius: 10px; font-size: 13px;"><i class="fa-solid fa-arrow-right-from-bracket" style="width: 16px;"></i> Cerrar sesión</a>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </header>
+
+    <!-- LAYOUT DE DOCUMENTACIÓN -->
+    <div class="doc-layout">
+        <!-- ÍNDICE LATERAL CON BUSCADOR DINÁMICO -->
+        <aside class="doc-sidebar">
+            <div class="doc-search-box">
+                <i class="fa-solid fa-search"></i>
+                <input type="text" id="docSearchInput" placeholder="Buscar en la guía..." onkeyup="filterDocSections()">
+            </div>
+            <div class="doc-sidebar-title">Guías de Usuario</div>
+            <ul id="docNavList">
+                <li><a href="#getting-started"><i class="fa-solid fa-rocket" style="width: 16px; color: #c084fc;"></i> Primeros Pasos</a></li>
+                <li><a href="#gestion"><i class="fa-solid fa-sliders" style="width: 16px; color: #c084fc;"></i> Panel de Control</a></li>
+                <li><a href="#comandos"><i class="fa-solid fa-bolt" style="width: 16px; color: #c084fc;"></i> Comandos</a></li>
+                <li><a href="#moderacion"><i class="fa-solid fa-shield-halved" style="width: 16px; color: #c084fc;"></i> Moderación</a></li>
+                <li><a href="#premium"><i class="fa-solid fa-crown" style="width: 16px; color: #c084fc;"></i> Premium</a></li>
+                <li><a href="#faq"><i class="fa-solid fa-circle-question" style="width: 16px; color: #c084fc;"></i> FAQ</a></li>
+            </ul>
+        </aside>
+
+        <!-- CONTENIDO DETALLADO CON BLOQUES DE CÓDIGO INTERACTIVOS -->
+        <main class="doc-content" id="docContentContainer">
+            <section id="getting-started" class="doc-card search-target">
+                <h2><i class="fa-solid fa-rocket" style="color: #c084fc;"></i> 1. Primeros Pasos (Getting Started)</h2>
+                <h3>¿Cómo invitar a PREM a tu servidor?</h3>
+                <ol>
+                    <li>Dirígete a la página principal del bot y haz clic en el botón <strong>"Añadir el bot"</strong>.</li>
+                    <li>Selecciona el servidor en la ventana de autorización de Discord.</li>
+                    <li><strong>Importante:</strong> Asegúrate de otorgarle los permisos de <strong>Administrador</strong> para que el bot gestione canales y roles de manera correcta.</li>
+                    <li>Haz clic en "Autorizar" y ¡listo! PREM aparecerá en la lista de miembros de tu comunidad.</li>
+                </ol>
+                
+                <h3>Iniciar sesión en el Dashboard</h3>
+                <p>Haz clic en el botón de Login o accede a tu perfil ubicado en la esquina superior derecha de la web para autenticarte con tu cuenta de Discord.</p>
+            </section>
+
+            <section id="gestion" class="doc-card search-target">
+                <h2><i class="fa-solid fa-sliders" style="color: #c084fc;"></i> 2. Gestión y Panel de Control</h2>
+                <p>El panel web te permite modificar la configuración de tu servidor en tiempo real sin comandos complejos:</p>
+                <ul>
+                    <li><strong>Panel General:</strong> Configura prefijos personalizados para comandos de texto tradicionales.</li>
+                    <li><strong>Canal de Bienvenida y Despedida:</strong> Selecciona el canal predeterminado y personaliza el saludo con menciones automáticas.</li>
+                    <li><strong>Niveles y XP:</strong> Activa o desactiva la progresión, define canales ignorados y asigna recompensas automáticas de roles.</li>
+                </ul>
+            </section>
+
+            <section id="comandos" class="doc-card search-target">
+                <h2><i class="fa-solid fa-bolt" style="color: #c084fc;"></i> 3. Comandos Destacados</h2>
+                <p>Puedes ejecutar los siguientes comandos interactivos de barra:</p>
+                
+                <div class="code-snippet-box">
+                    <code id="code-1">/daily</code>
+                    <button class="copy-btn" onclick="copyCode('code-1', this)"><i class="fa-regular fa-copy"></i> Copiar</button>
+                </div>
+                <div class="code-snippet-box">
+                    <code id="code-2">/work</code>
+                    <button class="copy-btn" onclick="copyCode('code-2', this)"><i class="fa-regular fa-copy"></i> Copiar</button>
+                </div>
+                <div class="code-snippet-box">
+                    <code id="code-3">/ticket</code>
+                    <button class="copy-btn" onclick="copyCode('code-3', this)"><i class="fa-regular fa-copy"></i> Copiar</button>
+                </div>
+                <div class="code-snippet-box">
+                    <code id="code-4">/play [canción]</code>
+                    <button class="copy-btn" onclick="copyCode('code-4', this)"><i class="fa-regular fa-copy"></i> Copiar</button>
+                </div>
+            </section>
+
+            <section id="moderacion" class="doc-card search-target">
+                <h2><i class="fa-solid fa-shield-halved" style="color: #c084fc;"></i> 4. Moderación Avanzada</h2>
+                <ul>
+                    <li><strong>Anti-Spam:</strong> Detecta y bloquea automáticamente floods de mensajes y enlaces maliciosos.</li>
+                    <li><strong>Sistema de Sanciones:</strong> Aplica advertencias, silenciamientos (*mutes*), expulsiones (*kicks*) o bloqueos (*bans*) rápidamente.</li>
+                    <li><strong>Registros (Logs):</strong> Mantén un historial detallado de las acciones de moderación y cambios del servidor.</li>
+                </ul>
+            </section>
+
+            <section id="premium" class="doc-card search-target">
+                <h2><i class="fa-solid fa-crown" style="color: #c084fc;"></i> 5. Funciones Premium y Comandos Personalizados</h2>
+                <p>Los administradores y dueños de servidores pueden acceder al apartado de <strong>Comandos personalizados</strong> desde el menú de usuario para crear interacciones a medida y respuestas automáticas avanzadas.</p>
+            </section>
+
+            <section id="faq" class="doc-card search-target">
+                <h2><i class="fa-solid fa-circle-question" style="color: #c084fc;"></i> 6. Preguntas Frecuentes (FAQ)</h2>
+                <ul>
+                    <li><strong>¿El bot es gratuito?</strong> Sí, todas las funciones principales de gestión, moderación, niveles y música son totalmente gratuitas.</li>
+                    <li><strong>¿Qué hago si el bot no responde?</strong> Verifica su conexión, la jerarquía de roles y los permisos necesarios, o acude al servidor de soporte técnico.</li>
+                    <li><strong>¿Cómo puedo dejar una reseña?</strong> Usa el comando interactivo <code>/review</code> en cualquier chat de Discord para calificar al bot.</li>
+                </ul>
+            </section>
+        </main>
+    </div>
+
+    <!-- SCRIPTS DE INTERACTIVIDAD -->
+    <script>
+        function toggleUserMenu() {
+            const menu = document.getElementById('userDropdownMenu');
+            if (menu) {
+                menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+            }
+        }
+        
+        function toggleNotificationMenu() {
+            const menu = document.getElementById('notificationMenu');
+            if (menu) {
+                menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+            }
+        }
+
+        function markAsRead() {
+            const badge = document.querySelector('#notificationBtn span');
+            if (badge) badge.style.display = 'none';
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            html.setAttribute('data-theme', current === 'light' ? 'dark' : 'light');
+        }
+
+        // 1. Buscador instantáneo en tiempo real
+        function filterDocSections() {
+            const query = document.getElementById('docSearchInput').value.toLowerCase();
+            const sections = document.querySelectorAll('.search-target');
+            
+            sections.forEach(section => {
+                const text = section.innerText.toLowerCase();
+                if (text.includes(query)) {
+                    section.style.display = "block";
+                } else {
+                    section.style.display = "none";
+                }
+            });
+        }
+
+        // 2. Copiar código con dinamismo visual
+        function copyCode(elementId, btn) {
+            const codeText = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(codeText).then(() => {
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> ¡Copiado!';
+                btn.style.color = '#22c55e';
+                btn.style.borderColor = '#22c55e';
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    btn.style.color = '#e879f9';
+                    btn.style.borderColor = 'rgba(168, 85, 247, 0.3)';
+                }, 2000);
+            });
+        }
+
+        window.addEventListener('click', function(event) {
+            if (!event.target.closest('.notification-container')) {
+                const menu = document.getElementById('notificationMenu');
+                if (menu) menu.style.display = 'none';
+            }
+            if (!event.target.closest('.user-dropdown-container')) {
+                const userMenu = document.getElementById('userDropdownMenu');
+                if (userMenu) userMenu.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

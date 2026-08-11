@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="<%= currentLang %>" data-theme="dark">
+<head>
+    <%- include('partials/head') %>
+    <title>Gestión de Permisos - PREM Bot</title>
+    <!-- SweetAlert2 para notificaciones y modales dinámicos modernos -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body {
+            background: var(--bg-gradient, #09090b);
+            color: var(--text-main, #ffffff);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow-y: auto;
+        }
+        .container {
+            max-width: 900px;
+            margin: 40px auto 60px auto;
+            padding: 0 20px;
+        }
+        .card-box {
+            background: var(--bg-card, rgba(20, 18, 35, 0.65));
+            border: 1px solid var(--border, rgba(192, 132, 252, 0.15));
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        .hero-title-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        /* Insignia de Sistema Blindado */
+        .status-badge {
+            background: rgba(16, 185, 129, 0.1);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: 0.5px;
+        }
+        .status-badge span {
+            width: 8px;
+            height: 8px;
+            background: #34d399;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #34d399;
+        }
+        .alert-box {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 12px;
+            padding: 16px 20px;
+            color: #f59e0b;
+            font-size: 0.95rem;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            line-height: 1.5;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 200px auto;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .table-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .search-box {
+            position: relative;
+            min-width: 250px;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 12px 45px 12px 16px; 
+            background: rgba(10, 8, 20, 0.8);
+            border: 1px solid var(--border, rgba(192, 132, 252, 0.2));
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+        }
+        .search-box input:focus {
+            border-color: var(--accent, #c084fc);
+        }
+        .search-box i {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted, #a78bfa);
+            font-size: 1rem;
+            pointer-events: none;
+        }
+        @media(max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .table-header-flex {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .search-box {
+                width: 100%;
+            }
+        }
+        input[type="text"], select {
+            background: rgba(10, 8, 20, 0.8);
+            border: 1px solid var(--border, rgba(192, 132, 252, 0.2));
+            border-radius: 10px;
+            padding: 12px 16px;
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+            width: 100%;
+        }
+        input[type="text"]:focus, select:focus {
+            border-color: var(--accent, #c084fc);
+        }
+        select option {
+            background: #141223;
+            color: #fff;
+        }
+        
+        button.btn-terminal {
+            background: rgba(16, 185, 129, 0.1);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            border-radius: 20px;
+            padding: 0 24px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.1);
+        }
+        button.btn-terminal:hover {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: #34d399;
+            box-shadow: 0 0 15px rgba(52, 211, 153, 0.3);
+            transform: translateY(-2px);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 5px;
+        }
+        th, td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid rgba(192, 132, 252, 0.1);
+        }
+        th {
+            color: var(--text-muted, #a78bfa);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .badge-role {
+            background: rgba(192, 132, 252, 0.15);
+            color: var(--accent, #c084fc);
+            border: 1px solid rgba(192, 132, 252, 0.3);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .btn-delete {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        .btn-delete:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- BARRA SUPERIOR -->
+    <header style="display: flex; justify-content: space-between; align-items: center; padding: 15px 40px; background: rgba(15, 12, 28, 0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border, rgba(192, 132, 252, 0.15)); position: sticky; top: 0; z-index: 1000;">
+        <a href="/dashboard/manager" style="display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text-main);">
+            <img src="https://cdn.discordapp.com/avatars/1534632950224781548/a_678d6b7de1507542e3636f611d297e20.gif?size=2048" alt="Logo" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent, #c084fc);">
+            <span style="font-weight: 800; font-size: 1.2rem;">Panel Manager Exclusivo</span>
+        </a>
+        <a href="/dashboard/manager" style="background: var(--bg-card, rgba(20, 18, 35, 0.65)); border: 1px solid var(--border); color: var(--text-main); padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-arrow-left"></i> Volver al Centro
+        </a>
+    </header>
+
+    <!-- CONTENIDO -->
+    <div class="container">
+        
+        <!-- CABECERA CON LA INSIGNIA "SISTEMA BLINDADO" -->
+        <div class="hero-title-area">
+            <div>
+                <h1 style="font-size: 2.2rem; font-weight: 800; margin: 0 0 8px 0;">🔑 Gestión de Permisos</h1>
+                <p style="color: var(--text-muted, #a78bfa); font-size: 1rem; margin: 0;">Autoriza a otros usuarios de confianza para que tengan acceso al panel de Manager.</p>
+            </div>
+            <div class="status-badge">
+                <span></span> Sistema Blindado
+            </div>
+        </div>
+
+        <!-- AVISO DE SEGURIDAD -->
+        <div class="alert-box">
+            <i class="fa-solid fa-triangle-exclamation" style="font-size: 1.4rem;"></i>
+            <div>
+                <strong>Aviso de seguridad importante:</strong> Los usuarios agregados aquí obtendrán privilegios elevados en el centro de control global. Asegúrate de otorgar acceso únicamente a personas de tu absoluta confianza.
+            </div>
+        </div>
+
+        <!-- Formulario para agregar con BOTÓN "AUTORIZAR" ESTILO INSIGNIA -->
+        <div class="card-box">
+            <h3 style="margin-top: 0; font-size: 1.2rem; color: var(--text-main);">Conceder nuevo acceso</h3>
+            <form action="/admin/agregar-permiso" method="POST" class="form-grid">
+                <input type="text" name="targetUserId" placeholder="ID de Discord del usuario (ej. 931545363565908041)" required>
+                
+                <select name="roleLevel">
+                    <option value="Administrador">Administrador Total</option>
+                    <option value="Moderador">Moderador del Panel</option>
+                </select>
+
+                <!-- Botón de Autorizar estilo insignia verde -->
+                <button type="submit" class="btn-terminal"><i class="fa-solid fa-user-shield"></i> Autorizar</button>
+            </form>
+        </div>
+
+        <!-- Tabla de administradores con BUSCADOR RÁPIDO -->
+        <div class="card-box">
+            <div class="table-header-flex">
+                <h3 style="margin: 0; font-size: 1.2rem; color: var(--text-main);">Administradores Autorizados</h3>
+                
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Filtrar por ID de usuario..." onkeyup="filtrarTabla()">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+            </div>
+
+            <% if (adminsList && adminsList.length > 0) { %>
+                <table id="adminsTable">
+                    <thead>
+                        <tr>
+                            <th>ID de Usuario de Discord</th>
+                            <th>Nivel de Acceso</th>
+                            <th style="text-align: right;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% adminsList.forEach(admin => { %>
+                            <tr class="admin-row">
+                                <td style="font-family: monospace; font-size: 1.05rem;" class="admin-id"><%= admin.id %></td>
+                                <td><span class="badge-role">Administrador</span></td>
+                                <td style="text-align: right;">
+                                    <button onclick="eliminarPermiso('<%= admin.id %>')" class="btn-delete">
+                                        <i class="fa-solid fa-trash"></i> Revocar
+                                    </button>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            <% } else { %>
+                <p style="color: var(--text-muted); text-align: center; padding: 20px 0; margin: 0;">No hay administradores adicionales registrados todavía.</p>
+            <% } %>
+        </div>
+
+        <!-- GLOSARIO DE ROLES -->
+        <div class="card-box">
+            <h3 style="margin-top: 0; font-size: 1.2rem; color: var(--text-main); display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-circle-info" style="color: var(--accent, #c084fc);"></i> Definición de Roles
+            </h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Conoce los privilegios asociados a cada nivel de acceso en el panel:</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                <div style="background: rgba(10, 8, 20, 0.6); border: 1px solid var(--border); border-radius: 12px; padding: 20px;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                        <i class="fa-solid fa-shield-cat" style="color: var(--accent, #c084fc); font-size: 1.2rem;"></i>
+                        <strong style="color: #fff; font-size: 1.05rem;">Administrador Total</strong>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0; line-height: 1.5;">
+                        Tiene control absoluto y sin restricciones sobre todo el centro de control. Puede enviar notificaciones globales, ver estadísticas avanzadas y gestionar accesos.
+                    </p>
+                </div>
+
+                <div style="background: rgba(10, 8, 20, 0.6); border: 1px solid var(--border); border-radius: 12px; padding: 20px;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                        <i class="fa-solid fa-user-shield" style="color: #38bdf8; font-size: 1.2rem;"></i>
+                        <strong style="color: #fff; font-size: 1.05rem;">Moderador del Panel</strong>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0; line-height: 1.5;">
+                        Diseñado para colaboradores de confianza. Permite visualizar estadísticas de uso y supervisar la sección de usuarios sospechosos de forma segura.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- REGISTRO DE AUDITORÍA -->
+        <div class="card-box">
+            <h3 style="margin-top: 0; font-size: 1.2rem; color: var(--text-main); display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-clock-rotate-left" style="color: var(--accent, #c084fc);"></i> Registro de Auditoría (Audit Logs)
+            </h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px;">Historial reciente de cambios en los accesos del panel.</p>
+            
+            <% if (auditLogs && auditLogs.length > 0) { %>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fecha / Hora</th>
+                            <th>Admin</th>
+                            <th>Acción</th>
+                            <th>Detalles</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% auditLogs.forEach(log => { %>
+                            <tr>
+                                <td style="color: var(--text-muted); font-size: 0.8rem;"><%= new Date(log.timestamp).toLocaleString() %></td>
+                                <td><strong><%= log.username %></strong></td>
+                                <td><span style="color: var(--accent);"><%= log.action %></span></td>
+                                <td><%= log.details %></td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            <% } else { %>
+                <div style="background: rgba(10, 8, 20, 0.5); border: 1px solid var(--border); border-radius: 10px; padding: 15px; font-size: 0.9rem; color: var(--text-muted);">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span><i class="fa-solid fa-shield-halved" style="color: #c084fc; margin-right: 8px;"></i> Sistema inicializado y protegido correctamente.</span>
+                        <span style="font-size: 0.8rem; font-family: monospace;">Hoy</span>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- SCRIPTS DE FUNCIONALIDAD DINÁMICA -->
+    <script>
+        function filtrarTabla() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const rows = document.getElementsByClassName('admin-row');
+
+            for (let i = 0; i < rows.length; i++) {
+                const td = rows[i].getElementsByClassName('admin-id')[0];
+                if (td) {
+                    const textValue = td.textContent || td.innerText;
+                    if (textValue.toLowerCase().indexOf(filter) > -1) {
+                        rows[i].style.display = "";
+                    } else {
+                        rows[i].style.display = "none";
+                    }
+                }
+            }
+        }
+
+        async function eliminarPermiso(targetUserId) {
+            const result = await Swal.fire({
+                title: '¿Estás segura?',
+                text: "Se le revocarán los accesos de Manager a este usuario de inmediato.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#334155',
+                confirmButtonText: 'Sí, revocar acceso',
+                cancelButtonText: 'Cancelar',
+                background: '#141223',
+                color: '#fff'
+            });
+
+            if (result.isConfirmed) {
+                try {
+                    const response = await fetch('/admin/eliminar-permiso', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ targetUserId })
+                    });
+
+                    const resJson = await response.json();
+                    if (resJson.success) {
+                        Swal.fire({
+                            title: '¡Revocado!',
+                            text: 'El permiso ha sido eliminado exitosamente.',
+                            icon: 'success',
+                            background: '#141223',
+                            color: '#fff',
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'No se pudo eliminar el permiso.',
+                            icon: 'error',
+                            background: '#141223',
+                            color: '#fff'
+                        });
+                    }
+                } catch (err) {
+                    Swal.fire({
+                        title: 'Error de red',
+                        text: 'Ocurrió un error al procesar la solicitud.',
+                        icon: 'error',
+                        background: '#141223',
+                        color: '#fff'
+                    });
+                }
+            }
+        }
+    </script>
+</body>
+</html>

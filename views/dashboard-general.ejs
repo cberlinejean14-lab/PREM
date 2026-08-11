@@ -1,0 +1,133 @@
+<!-- views/dashboard-general.ejs -->
+<%- include('partials/head') %>
+
+<style>
+    /* Asegurar que el contenedor principal distribuya la barra lateral y el contenido lado a lado */
+    .layout-container {
+        display: flex;
+        width: 100%;
+        min-height: calc(100vh - 60px);
+        overflow-x: hidden;
+    }
+    .main-content {
+        flex: 1;
+        padding: 30px;
+        box-sizing: border-box;
+        background: var(--bg-main, #0f0f13);
+        color: var(--text-main, #ffffff);
+        overflow-y: auto;
+    }
+    .card {
+        background: var(--bg-card, #181820);
+        border: 1px solid var(--border, #2a2a3c);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+</style>
+
+<%- include('partials/sidebar') %>
+
+<!-- Contenido Principal -->
+<main class="main-content">
+    <h1 class="page-title">
+        <% if (currentLang === 'en') { %>General Dashboard<% } 
+        else if (currentLang === 'pt') { %>Painel Geral<% } 
+        else if (currentLang === 'fr') { %>Tableau de bord général<% } 
+        else if (currentLang === 'hi') { %>सामान्य डैशबोर्ड<% } 
+        else if (currentLang === 'ar') { %>لوحة التحكم العامة<% } 
+        else if (currentLang === 'zh') { %>常规仪表盘<% } 
+        else { %>Panel General<% } %>
+    </h1>
+    
+    <div class="card">
+        <h2 class="card-title">
+            <% if (currentLang === 'en') { %>Welcome to <%= (typeof guildData !== 'undefined' && guildData) ? guildData.name : 'Servidor' %><% } 
+            else if (currentLang === 'pt') { %>Bem-vindo ao <%= (typeof guildData !== 'undefined' && guildData) ? guildData.name : 'Servidor' %><% } 
+            else if (currentLang === 'fr') { %>Bienvenue sur <%= (typeof guildData !== 'undefined' && guildData) ? guildData.name : 'Servidor' %><% } 
+            else if (currentLang === 'hi') { %>স্বাগতম <%= (typeof guildData !== 'undefined' && guildData) ? guildData.name : 'Servidor' %><% } 
+            else if (currentLang === 'ar') { %>أهلاً بك في <%= (typeof guildData !== 'undefined' && guildData) ? guildData.name : 'Servidor' %><% } 
+            else if (currentLang === 'zh') { %>欢迎来到 <%= (typeof guildData !== 'undefined' && guildData) ? guildData.name : 'Servidor' %><% } 
+            else { %>¡Bienvenido a <%= (typeof guildData !== 'undefined' && guildData) ? guildData.name : 'Servidor' %><% } %>
+        </h2>
+        <p>
+            <% if (currentLang === 'en') { %>Manage your server modules, configure settings, and enhance your community experience with PREM Bot.[cite: 3]<% } 
+            else if (currentLang === 'pt') { %>Gerencie os módulos do seu servidor, defina configurações e melhore a experiência da sua comunidade com o PREM Bot.[cite: 3]<% } 
+            else if (currentLang === 'fr') { %>Gérez vos modules de serveur, configurez les paramètres et améliorez l'expérience de votre communauté avec PREM Bot.[cite: 3]<% } 
+            else if (currentLang === 'hi') { %>अपने सर्वर मॉड्यूल प्रबंधित करें, सेटिंग्स कॉन्फ़िगर करें, और PREM बॉट के साथ अपने समुदाय के अनुभव को बेहतर बनाएं।[cite: 3]<% } 
+            else if (currentLang === 'ar') { %>إدارة وحدة الخادم الخاص بك، وتكوين الإعدادات، وتحسين تجربة مجتمعك باستخدام PREM Bot.[cite: 3]<% } 
+            else if (currentLang === 'zh') { %>使用 PREM Bot 管理您的服务器模块、配置设置并增强社区体验。[cite: 3]<% } 
+            else { %>Administra los módulos de tu servidor, configura los ajustes y mejora la experiencia de tu comunidad con PREM Bot.[cite: 3]<% } %>
+        </p>
+    </div>
+
+    <div class="card">
+        <h2 class="card-title">
+            <% if (currentLang === 'en') { %>Quick Statistics<% } 
+            else if (currentLang === 'pt') { %>Estatísticas Rápidas<% } 
+            else if (currentLang === 'fr') { %>Statistiques rapides<% } 
+            else if (currentLang === 'hi') { %>त्वरित आँकड़े<% } 
+            else if (currentLang === 'ar') { %>إحصائيات سريعة<% } 
+            else if (currentLang === 'zh') { %>快速统计<% } 
+            else { %>Estadísticas rápidas<% } %>
+        </h2>
+        <p>
+            <% if (currentLang === 'en') { %>Server status is optimal. Bot permissions verified successfully.[cite: 3]<% } 
+            else if (currentLang === 'pt') { %>O status do servidor está ideal. Permissões do bot verificadas com sucesso.[cite: 3]<% } 
+            else if (currentLang === 'fr') { %>L'état du serveur est optimal. Permissions du bot vérifiées avec succès.[cite: 3]<% } 
+            else if (currentLang === 'hi') { %>सर्वर स्थिति अनुकूल है। बॉट की अनुमतियाँ सफलतापूर्वक सत्यापित की गईं।[cite: 3]<% } 
+            else if (currentLang === 'ar') { %>حالة الخادم ممتازة. تم التحقق من صلاحيات البوت بنجاح.[cite: 3]<% } 
+            else if (currentLang === 'zh') { %>服务器状态最佳。机器人权限验证成功。[cite: 3]<% } 
+            else { %>El estado del servidor es óptimo. Permisos del bot verificados correctamente.[cite: 3]<% } %>
+        </p>
+    </div>
+</main>
+</div> <!-- Cierre correcto de .layout-container abierto en sidebar.ejs -->
+
+<!-- Script del buscador (Ctrl+K y filtrado) -->
+<script>
+    const searchInput = document.getElementById('searchInput');
+    const searchResults = document.getElementById('searchResults');
+    const moduleOptions = document.querySelectorAll('.module-option');
+
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const query = this.value.toLowerCase().trim();
+            if (query.length > 0) {
+                searchResults.classList.add('show');
+                moduleOptions.forEach(option => {
+                    const text = option.textContent.toLowerCase();
+                    if (text.includes(query)) {
+                        option.style.display = 'flex';
+                    } else {
+                        option.style.display = 'none';
+                    }
+                });
+            } else {
+                searchResults.classList.remove('show');
+            }
+        });
+
+        searchInput.addEventListener('focus', function() {
+            if (this.value.trim().length > 0) {
+                searchResults.classList.add('show');
+            }
+        });
+    }
+
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.search-wrapper')) {
+            if (searchResults) searchResults.classList.remove('show');
+        }
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+            e.preventDefault();
+            if (searchInput) searchInput.focus();
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="<%= typeof lang !== 'undefined' ? lang : 'es' %>" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PREM - Variables</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-gradient: radial-gradient(circle at 50% 0%, #4c1d95, #1e1b4b, #09090b);
+            --card-bg: rgba(20, 18, 35, 0.65);
+            --bg-sidebar: #12101f;
+            --hover-sidebar: rgba(255, 255, 255, 0.05);
+            --text-color: #ffffff;
+            --text-main: #ffffff;
+            --text-muted: #a78bfa;
+            --accent-color: #c084fc;
+            --accent: #c084fc;
+            --accent-glow: rgba(192, 132, 252, 0.4);
+            --border-color: rgba(192, 132, 252, 0.15);
+            --border: rgba(192, 132, 252, 0.15);
+            --nav-bg: rgba(15, 12, 28, 0.8);
+            --shimmer-color: rgba(255, 255, 255, 0.25);
+        }
+
+        [data-theme="light"] {
+            --bg-gradient: radial-gradient(circle at 50% 0%, #e9d5ff, #f3e8ff, #ffffff);
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --bg-sidebar: #f8fafc;
+            --hover-sidebar: rgba(0, 0, 0, 0.05);
+            --text-color: #1e1b4b;
+            --text-main: #1e1b4b;
+            --text-muted: #6b21a8;
+            --accent-color: #9333ea;
+            --accent: #9333ea;
+            --accent-glow: rgba(147, 51, 234, 0.25);
+            --border-color: rgba(147, 51, 234, 0.2);
+            --border: rgba(147, 51, 234, 0.2);
+            --nav-bg: rgba(255, 255, 255, 0.9);
+            --shimmer-color: rgba(75, 85, 99, 0.35);
+        }
+
+        body {
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-color);
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background-color: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+            z-index: 1000;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .brand-link {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+            color: var(--text-color);
+        }
+
+        .bot-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 0 15px rgba(192, 132, 252, 0.7);
+            border: 2px solid var(--accent-color);
+        }
+
+        .bot-name {
+            font-weight: 800;
+            font-size: 1.4rem;
+            letter-spacing: 0.5px;
+            background: linear-gradient(45deg, var(--text-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .login-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 10px 22px;
+            border-radius: 25px;
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .login-btn:hover {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 6px 16px;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .user-profile:hover {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .theme-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+
+        .theme-btn:hover {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .main-content {
+            max-width: 900px;
+            width: 100%;
+            margin: 40px auto;
+            padding: 0 20px;
+            box-sizing: border-box;
+            flex: 1;
+        }
+
+        .container {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 35px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 { color: var(--text-main); font-size: 2rem; margin-top: 15px; }
+        p { color: var(--text-muted); }
+
+        .search-container {
+            position: relative;
+            margin: 25px 0;
+        }
+        .search-input {
+            width: 100%;
+            padding: 14px 20px 14px 45px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            color: var(--text-main);
+            font-size: 1rem;
+            outline: none;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+        .search-input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .variable-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .variable-box {
+            background: rgba(255, 255, 255, 0.04);
+            padding: 15px 20px;
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        .variable-box:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+        
+        code { 
+            color: var(--accent-color); 
+            background: rgba(0, 0, 0, 0.3); 
+            padding: 6px 12px; 
+            border-radius: 8px; 
+            font-family: monospace;
+            font-size: 0.95rem;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        code:hover {
+            background: var(--accent-color);
+            color: #ffffff;
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        #copyToast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--accent-color);
+            color: #ffffff;
+            padding: 12px 22px;
+            border-radius: 12px;
+            font-weight: 600;
+            box-shadow: 0 5px 20px var(--accent-glow);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 9999;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+        #copyToast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        a.back-link { 
+            color: var(--accent-color); 
+            text-decoration: none; 
+            display: inline-flex; 
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+        a.back-link:hover { opacity: 0.8; }
+
+        footer {
+            text-align: center;
+            padding: 30px 25px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border-color);
+            background-color: var(--nav-bg);
+            margin-top: 60px;
+        }
+    </style>
+</head>
+<body>
+
+    <% const userLang = typeof currentLang !== 'undefined' ? currentLang : 'es'; %>
+
+    <nav>
+        <div class="nav-left">
+            <a href="/?lang=<%= userLang %>" class="brand-link">
+                <img src="https://cdn.discordapp.com/avatars/1534632950224781548/a_678d6b7de1507542e3636f611d297e20.gif?size=2048" alt="Bot Avatar" class="bot-avatar">
+                <span class="bot-name">PREM</span>
+            </a>
+
+            <!-- MENÚ DE RECURSOS -->
+            <div class="resources-dropdown-container" style="position: relative; display: inline-block;">
+                <div onclick="toggleResourcesMenu()" style="display: flex; align-items: center; gap: 6px; background: transparent; border: none; padding: 6px 10px; border-radius: 8px; cursor: pointer; transition: opacity 0.2s ease;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
+                    <span style="font-weight: 600; font-size: 0.95rem; color: var(--text-main);">Recursos</span>
+                    <i class="fa-solid fa-chevron-down" style="font-size: 11px; color: var(--text-muted);"></i>
+                </div>
+
+                <div id="resourcesDropdownMenu" style="display: none; position: absolute; left: 0; top: 52px; width: 220px; background: var(--bg-sidebar); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; padding: 8px; backdrop-filter: blur(20px); text-align: left;">
+                    <a href="/variables?lang=<%= userLang %>" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'">
+                        <i class="fa-solid fa-code-merge" style="width: 16px; color: var(--text-muted);"></i> Variables
+                    </a>
+                    <a href="/comandos?lang=<%= userLang %>" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'">
+                        <i class="fa-solid fa-terminal" style="width: 16px; color: var(--text-muted);"></i> Comandos
+                    </a>
+                    <a href="/documentacion?lang=<%= userLang %>" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'">
+                        <i class="fa-solid fa-book" style="width: 16px; color: var(--text-muted);"></i> Guías / Docs
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 15px;">
+            
+            <!-- NOTIFICACIONES -->
+            <div class="notification-dropdown-container" style="position: relative; display: inline-block;">
+                <button class="theme-btn" onclick="toggleNotificationMenu()" title="Notificaciones" style="position: relative;">
+                    <i class="fa-solid fa-bell"></i>
+                    <% if (typeof historial !== 'undefined' && Array.isArray(historial) && historial.length > 0) { %>
+                        <span id="notifBadge" style="position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; background-color: #c084fc; border-radius: 50%; box-shadow: 0 0 10px #c084fc, 0 0 5px #ffffff;"></span>
+                    <% } %>
+                </button>
+
+                <div id="notificationDropdownMenu" style="display: none; position: absolute; right: 0; top: 52px; width: 280px; background: var(--bg-sidebar); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; padding: 12px; backdrop-filter: blur(20px); text-align: left;">
+                    <div style="font-weight: 700; font-size: 14px; color: var(--text-main); margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                        <span><%= userLang === 'en' ? 'Notifications' : 'Notificaciones' %></span>
+                        <span onclick="markAsRead()" style="font-size: 10px; color: var(--accent-color); cursor: pointer;"><%= userLang === 'en' ? 'Mark read' : 'Marcar leídas' %></span>
+                    </div>
+                    <div style="padding: 12px 8px; color: var(--text-muted); font-size: 13px; text-align: center;">
+                        <%= userLang === 'en' ? 'No new notifications.' : 'No hay notificaciones nuevas.' %>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SELECTOR DE IDIOMAS -->
+            <div class="lang-dropdown-container" style="position: relative; display: inline-block;">
+                <div onclick="toggleLangMenu()" style="display: flex; align-items: center; gap: 8px; background: var(--card-bg); border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 25px; cursor: pointer; backdrop-filter: blur(10px); transition: all 0.3s ease;" onmouseover="this.style.borderColor='var(--accent-color)'; this.style.boxShadow='0 0 15px var(--accent-glow)';" onmouseout="this.style.borderColor='var(--border-color)'; this.style.boxShadow='none';">
+                    <img src="https://flagcdn.com/24x18/<%= userLang === 'en' ? 'us' : userLang === 'pt' ? 'br' : userLang === 'fr' ? 'fr' : userLang === 'de' ? 'de' : userLang === 'it' ? 'it' : userLang === 'ru' ? 'ru' : userLang === 'ja' ? 'jp' : userLang === 'zh' ? 'cn' : userLang === 'ar' ? 'sa' : 'es' %>.png" alt="flag" style="width: 20px; height: 15px; border-radius: 2px; object-fit: cover;">
+                    <span style="font-weight: 700; font-size: 0.95rem; color: var(--text-main);"><%= userLang.toUpperCase() %></span>
+                    <i class="fa-solid fa-chevron-down" style="font-size: 11px; color: var(--text-muted); margin-left: 2px;"></i>
+                </div>
+
+                <div id="langDropdownMenu" style="display: none; position: absolute; right: 0; top: 52px; width: 220px; background: var(--bg-sidebar); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; padding: 10px; backdrop-filter: blur(20px); text-align: left;">
+                    <div style="font-weight: 700; font-size: 13px; color: var(--text-main); padding: 6px 10px 10px 10px; border-bottom: 1px solid var(--border); margin-bottom: 6px;">
+                        <%= userLang === 'en' ? 'Select a language' : 'Selecciona un idioma' %>
+                    </div>
+
+                    <a href="/variables?lang=es" style="display: flex; align-items: center; gap: 12px; padding: 9px 10px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'"><img src="https://flagcdn.com/24x18/es.png" style="width: 20px; height: 15px; border-radius: 2px; object-fit: cover;"> <span style="<%= userLang === 'es' ? 'color: var(--accent-color); font-weight: 600;' : '' %>">Español</span></a>
+                    <a href="/variables?lang=en" style="display: flex; align-items: center; gap: 12px; padding: 9px 10px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'"><img src="https://flagcdn.com/24x18/us.png" style="width: 20px; height: 15px; border-radius: 2px; object-fit: cover;"> <span style="<%= userLang === 'en' ? 'color: var(--accent-color); font-weight: 600;' : '' %>">English</span></a>
+                    <a href="/variables?lang=pt" style="display: flex; align-items: center; gap: 12px; padding: 9px 10px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'"><img src="https://flagcdn.com/24x18/br.png" style="width: 20px; height: 15px; border-radius: 2px; object-fit: cover;"> <span style="<%= userLang === 'pt' ? 'color: var(--accent-color); font-weight: 600;' : '' %>">Português (Brasil)</span></a>
+                    <a href="/variables?lang=fr" style="display: flex; align-items: center; gap: 12px; padding: 9px 10px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'"><img src="https://flagcdn.com/24x18/fr.png" style="width: 20px; height: 15px; border-radius: 2px; object-fit: cover;"> <span style="<%= userLang === 'fr' ? 'color: var(--accent-color); font-weight: 600;' : '' %>">Français</span></a>
+                    <a href="/variables?lang=de" style="display: flex; align-items: center; gap: 12px; padding: 9px 10px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'"><img src="https://flagcdn.com/24x18/de.png" style="width: 20px; height: 15px; border-radius: 2px; object-fit: cover;"> <span style="<%= userLang === 'de' ? 'color: var(--accent-color); font-weight: 600;' : '' %>">Deutsch</span></a>
+                    <a href="/variables?lang=it" style="display: flex; align-items: center; gap: 12px; padding: 9px 10px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'"><img src="https://flagcdn.com/24x18/it.png" style="width: 20px; height: 15px; border-radius: 2px; object-fit: cover;"> <span style="<%= userLang === 'it' ? 'color: var(--accent-color); font-weight: 600;' : '' %>">Italiano</span></a>
+                    <a href="/variables?lang=ru" style="display: flex; align-items: center; gap: 12px; padding: 9px 10px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'"><img src="https://flagcdn.com/24x18/ru.png" style="width: 20px; height: 15px; border-radius: 2px; object-fit: cover;"> <span style="<%= userLang === 'ru' ? 'color: var(--accent-color); font-weight: 600;' : '' %>">Русский</span></a>
+                    <a href="/variables?lang=ja" style="display: flex; align-items: center; gap: 12px; padding: 9px 10px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'"><img src="https://flagcdn.com/24x18/jp.png" style="width: 20px; height: 15px; border-radius: 2px; object-fit: cover;"> <span style="<%= userLang === 'ja' ? 'color: var(--accent-color); font-weight: 600;' : '' %>">日本語</span></a>
+                    <a href="/variables?lang=zh" style="display: flex; align-items: center; gap: 12px; padding: 9px 10px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'"><img src="https://flagcdn.com/24x18/cn.png" style="width: 20px; height: 15px; border-radius: 2px; object-fit: cover;"> <span style="<%= userLang === 'zh' ? 'color: var(--accent-color); font-weight: 600;' : '' %>">中文</span></a>
+                    <a href="/variables?lang=ar" style="display: flex; align-items: center; gap: 12px; padding: 9px 10px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'"><img src="https://flagcdn.com/24x18/sa.png" style="width: 20px; height: 15px; border-radius: 2px; object-fit: cover;"> <span style="<%= userLang === 'ar' ? 'color: var(--accent-color); font-weight: 600;' : '' %>">العربية</span></a>
+                </div>
+            </div>
+
+            <!-- TEMA -->
+            <button class="theme-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Cambiar tema">
+                <i class="fa-solid fa-moon" id="themeIcon"></i>
+            </button>
+
+            <!-- PERFIL DE USUARIO CON MENÚ DESPLEGABLE -->
+            <% if (typeof user !== 'undefined' && user) { %>
+                <div class="user-dropdown-container" style="position: relative; display: inline-block;">
+                    <div onclick="toggleUserMenu()" class="user-profile">
+                        <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png" alt="Avatar" class="user-avatar">
+                        <span style="font-weight: 600; font-size: 0.95rem; color: var(--text-main);"><%= user.global_name || user.username %></span>
+                        <i class="fa-solid fa-chevron-down" style="font-size: 11px; color: var(--text-muted); margin-left: 2px;"></i>
+                    </div>
+
+                    <div id="userDropdownMenu" style="display: none; position: absolute; right: 0; top: 52px; width: 260px; background: var(--bg-sidebar); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; padding: 8px; backdrop-filter: blur(20px); text-align: left;">
+                        <div style="padding: 10px 12px; border-bottom: 1px solid var(--border); margin-bottom: 6px;">
+                            <div style="font-weight: 700; font-size: 14px; color: var(--text-main);"><%= user.global_name || user.username %></div>
+                            <div style="font-size: 12px; color: var(--text-muted);">@<%= user.username %></div>
+                        </div>
+
+                        <a href="/dashboard/account?lang=<%= userLang %>" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'">
+                            <i class="fa-solid fa-user" style="width: 16px; color: var(--text-muted);"></i> Mi cuenta
+                        </a>
+
+                        <a href="/dashboard?lang=<%= userLang %>" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'">
+                            <i class="fa-solid fa-server" style="width: 16px; color: var(--text-muted);"></i> Mis servidores
+                        </a>
+
+                        <a href="#" onclick="toggleTheme(); return false;" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'">
+                            <i class="fa-solid fa-circle-half-stroke" style="width: 16px; color: var(--text-muted);"></i> Preferencias / Tema
+                        </a>
+
+                        <% if (user.id === '931545363565908041') { %>
+                            <a href="/dashboard/manager" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; text-decoration: none; border-radius: 8px; font-size: 13px; font-weight: 500; background: linear-gradient(135deg, rgba(217,70,239,0.15), rgba(192,132,252,0.15)); border: 1px solid rgba(217,70,239,0.4);" onmouseover="this.style.background='linear-gradient(135deg, rgba(217,70,239,0.25), rgba(192,132,252,0.25))'" onmouseout="this.style.background='linear-gradient(135deg, rgba(217,70,239,0.15), rgba(192,132,252,0.15))'">
+                                <i class="fa-solid fa-shield-halved" style="width: 16px; color: #e879f9; text-shadow: 0 0 10px rgba(232,121,249,0.7);"></i> 
+                                <span style="background: linear-gradient(135deg, #ffffff, #f5d0fe, #e879f9); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700;">Manager</span>
+                            </a>
+                        <% } %>
+
+                        <div style="font-size: 10px; color: var(--text-muted); font-weight: bold; margin: 8px 12px 4px 12px; text-transform: uppercase;">Gestión de PREM Bot</div>
+
+                        <a href="/dashboard/custom-bot?lang=<%= userLang %>" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'">
+                            <i class="fa-solid fa-robot" style="width: 16px; color: var(--text-muted);"></i> Personalización de Bot
+                        </a>
+
+                        <a href="/dashboard/custom-commands?lang=<%= userLang %>" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; text-decoration: none; border-radius: 8px; font-size: 13px; font-weight: 500; background: linear-gradient(135deg, rgba(250,204,21,0.15), rgba(192,132,252,0.15)); border: 1px solid rgba(250,204,21,0.4);" onmouseover="this.style.background='linear-gradient(135deg, rgba(250,204,21,0.25), rgba(192,132,252,0.25))'" onmouseout="this.style.background='linear-gradient(135deg, rgba(250,204,21,0.15), rgba(192,132,252,0.15))'">
+                            <i class="fa-solid fa-code" style="width: 16px; color: #facc15; text-shadow: 0 0 10px rgba(250,204,21,0.7);"></i> 
+                            <span style="background: linear-gradient(135deg, #ffffff, #fef08a, #facc15); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700;">Comandos personalizados</span>
+                            <span style="margin-left: auto; background: linear-gradient(135deg, #ffffff, #fef08a, #facc15); color: #713f12; font-size: 9px; padding: 3px 8px; border-radius: 6px; font-weight: 800; text-transform: uppercase;">PREMIUM</span>
+                        </a>
+
+                        <div style="font-size: 10px; color: var(--text-muted); font-weight: bold; margin: 8px 12px 4px 12px; text-transform: uppercase;">Comunidad</div>
+
+                        <a href="https://discord.gg/xCuyb5Z33X" target="_blank" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'">
+                            <i class="fa-brands fa-discord" style="width: 16px; color: #5865F2;"></i> Servidor de Soporte
+                        </a>
+
+                        <a href="/documentacion?lang=<%= userLang %>" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'">
+                            <i class="fa-solid fa-book" style="width: 16px; color: var(--text-muted);"></i> Documentación / Guías
+                        </a>
+
+                        <a href="#" target="_blank" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'">
+                            <i class="fa-solid fa-star" style="width: 16px; color: #eab308;"></i> Votar por el bot
+                        </a>
+
+                        <div style="padding: 10px 12px; border-top: 1px solid var(--border); margin-top: 6px; font-size: 12px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
+                            <span><span style="height: 8px; width: 8px; background-color: #22c55e; border-radius: 50%; display: inline-block; margin-right: 5px;"></span> Estado de la API</span>
+                            <span style="color: #22c55e; font-weight: 600; font-size: 11px;">Operational</span>
+                        </div>
+
+                        <div style="padding: 0 12px 6px 12px; font-size: 11px; color: var(--text-muted); display: flex; justify-content: space-between;">
+                            <span>Versión actual</span>
+                            <span style="font-weight: 600; color: var(--text-main);">PREM Bot v2.5</span>
+                        </div>
+
+                        <div style="border-top: 1px solid var(--border); margin-top: 4px; padding-top: 4px;">
+                            <a href="/logout" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: #ef4444; text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='rgba(239,68,68,0.1)'" onmouseout="this.style.background='transparent'">
+                                <i class="fa-solid fa-arrow-right-from-bracket" style="width: 16px;"></i> Cerrar sesión
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            <% } else { %>
+                <a href="/auth/discord" class="login-btn"><i class="fa-brands fa-discord"></i> Login</a>
+            <% } %>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <div class="container">
+            <a href="/?lang=<%= userLang %>" class="back-link"><i class="fa-solid fa-arrow-left"></i> <%= userLang === 'en' ? 'Back to home' : 'Volver al inicio' %></a>
+            <h1><%= userLang === 'en' ? 'Available Variables' : 'Variables Disponibles' %></h1>
+            <p><%= userLang === 'en' ? 'Click on any variable to copy it automatically to your clipboard:' : 'Haz clic en cualquier variable para copiarla automáticamente al portapapeles:' %></p>
+            
+            <div class="search-container">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="searchInput" class="search-input" placeholder="<%= userLang === 'en' ? 'Search variable or description...' : 'Buscar variable o descripción...' %>" onkeyup="filterVariables()">
+            </div>
+
+            <div class="variable-list" id="variableList">
+                <div class="variable-box" data-name="mencionar al usuario user mention">
+                    <span><%= userLang === 'en' ? 'Mention user' : 'Mencionar al usuario' %></span>
+                    <code onclick="copyToClipboard('{user}')">{user}</code>
+                </div>
+                <div class="variable-box" data-name="nombre del usuario username">
+                    <span><%= userLang === 'en' ? 'Username' : 'Nombre de usuario' %></span>
+                    <code onclick="copyToClipboard('{username}')">{username}</code>
+                </div>
+                <div class="variable-box" data-name="id del usuario user id">
+                    <span><%= userLang === 'en' ? 'User ID' : 'ID del usuario' %></span>
+                    <code onclick="copyToClipboard('{user_id}')">{user_id}</code>
+                </div>
+                <div class="variable-box" data-name="nombre del servidor server name">
+                    <span><%= userLang === 'en' ? 'Server name' : 'Nombre del servidor' %></span>
+                    <code onclick="copyToClipboard('{server}')">{server}</code>
+                </div>
+                <div class="variable-box" data-name="id del servidor server id">
+                    <span><%= userLang === 'en' ? 'Server ID' : 'ID del servidor' %></span>
+                    <code onclick="copyToClipboard('{server_id}')">{server_id}</code>
+                </div>
+                <div class="variable-box" data-name="cantidad de miembros server members count">
+                    <span><%= userLang === 'en' ? 'Member count' : 'Cantidad de miembros' %></span>
+                    <code onclick="copyToClipboard('{server_members}')">{server_members}</code>
+                </div>
+                <div class="variable-box" data-name="mencionar canal channel mention">
+                    <span><%= userLang === 'en' ? 'Channel mention' : 'Mencionar canal' %></span>
+                    <code onclick="copyToClipboard('{channel}')">{channel}</code>
+                </div>
+                <div class="variable-box" data-name="nombre del canal channel name">
+                    <span><%= userLang === 'en' ? 'Channel name' : 'Nombre del canal' %></span>
+                    <code onclick="copyToClipboard('{channel_name}')">{channel_name}</code>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="copyToast">
+        <i class="fa-solid fa-circle-check"></i>
+        <span id="toastText"><%= userLang === 'en' ? 'Variable copied!' : '¡Variable copiada!' %></span>
+    </div>
+
+    <footer>
+        <p style="margin: 0;">&copy; 2026 PREM Bot. <%= userLang === 'en' ? 'All rights reserved.' : 'Todos los derechos reservados.' %></p>
+    </footer>
+
+    <script>
+        function markAsRead() {
+            const badge = document.getElementById('notifBadge');
+            if (badge) {
+                badge.style.display = 'none';
+            }
+        }
+
+        function toggleResourcesMenu() {
+            const menu = document.getElementById('resourcesDropdownMenu');
+            const notifMenu = document.getElementById('notificationDropdownMenu');
+            const langMenu = document.getElementById('langDropdownMenu');
+            const userMenu = document.getElementById('userDropdownMenu');
+            if (notifMenu) notifMenu.style.display = 'none';
+            if (langMenu) langMenu.style.display = 'none';
+            if (userMenu) userMenu.style.display = 'none';
+            if (menu) menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function toggleNotificationMenu() {
+            const menu = document.getElementById('notificationDropdownMenu');
+            const resMenu = document.getElementById('resourcesDropdownMenu');
+            const langMenu = document.getElementById('langDropdownMenu');
+            const userMenu = document.getElementById('userDropdownMenu');
+            if (resMenu) resMenu.style.display = 'none';
+            if (langMenu) langMenu.style.display = 'none';
+            if (userMenu) userMenu.style.display = 'none';
+            if (menu) menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function toggleLangMenu() {
+            const menu = document.getElementById('langDropdownMenu');
+            const resMenu = document.getElementById('resourcesDropdownMenu');
+            const notifMenu = document.getElementById('notificationDropdownMenu');
+            const userMenu = document.getElementById('userDropdownMenu');
+            if (resMenu) resMenu.style.display = 'none';
+            if (notifMenu) notifMenu.style.display = 'none';
+            if (userMenu) userMenu.style.display = 'none';
+            if (menu) menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function toggleUserMenu() {
+            const menu = document.getElementById('userDropdownMenu');
+            const resMenu = document.getElementById('resourcesDropdownMenu');
+            const notifMenu = document.getElementById('notificationDropdownMenu');
+            const langMenu = document.getElementById('langDropdownMenu');
+            if (resMenu) resMenu.style.display = 'none';
+            if (notifMenu) notifMenu.style.display = 'none';
+            if (langMenu) langMenu.style.display = 'none';
+            if (menu) menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.closest('.resources-dropdown-container') && !event.target.closest('.user-dropdown-container') && !event.target.closest('.lang-dropdown-container') && !event.target.closest('.notification-dropdown-container')) {
+                const resMenu = document.getElementById('resourcesDropdownMenu');
+                const userMenu = document.getElementById('userDropdownMenu');
+                const langMenu = document.getElementById('langDropdownMenu');
+                const notifMenu = document.getElementById('notificationDropdownMenu');
+                if (resMenu) resMenu.style.display = 'none';
+                if (userMenu) userMenu.style.display = 'none';
+                if (langMenu) langMenu.style.display = 'none';
+                if (notifMenu) notifMenu.style.display = 'none';
+            }
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const toast = document.getElementById('copyToast');
+                const toastText = document.getElementById('toastText');
+                toastText.innerText = `<%= userLang === 'en' ? 'Copied: ' : '¡Copiado: ' %>` + text + `<%= userLang === 'en' ? '' : '!' %>`;
+                toast.classList.add('show');
+                
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 2000);
+            }).catch(err => {
+                console.error('Error al copiar: ', err);
+            });
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('themeIcon');
+            const currentTheme = html.getAttribute('data-theme');
+
+            if (currentTheme === 'light') {
+                html.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fa-solid fa-moon';
+                localStorage.setItem('prem_theme', 'dark');
+            } else {
+                html.setAttribute('data-theme', 'light');
+                themeIcon.className = 'fa-solid fa-sun';
+                localStorage.setItem('prem_theme', 'light');
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('prem_theme') || 'dark';
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('themeIcon');
+            html.setAttribute('data-theme', savedTheme);
+            if (themeIcon) {
+                themeIcon.className = savedTheme === 'light' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+            }
+        });
+
+        function filterVariables() {
+            let input = document.getElementById('searchInput').value.toLowerCase();
+            let items = document.getElementsByClassName('variable-box');
+
+            for (let i = 0; i < items.length; i++) {
+                let text = items[i].getAttribute('data-name').toLowerCase();
+                let spanText = items[i].getElementsByTagName('span')[0].innerText.toLowerCase();
+                let codeText = items[i].getElementsByTagName('code')[0].innerText.toLowerCase();
+
+                if (text.includes(input) || spanText.includes(input) || codeText.includes(input)) {
+                    items[i].style.display = "flex";
+                } else {
+                    items[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+</body>
+</html>

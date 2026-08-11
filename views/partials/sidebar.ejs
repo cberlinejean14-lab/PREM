@@ -1,0 +1,295 @@
+<!-- BARRA SUPERIOR ÚNICA -->
+<header class="top-navbar" style="display: flex; justify-content: space-between; align-items: center; padding: 0 30px;">
+    <!-- PERFIL Y NOMBRE DEL BOT INTERACTIVO -->
+    <a href="/dashboard" style="display: flex; align-items: center; gap: 10px; text-decoration: none; cursor: pointer;" title="Ir al panel principal">
+        <img src="https://cdn.discordapp.com/avatars/1534632950224781548/a_678d6b7de1507542e3636f611d297e20.gif?size=2048" alt="PREM Bot Logo" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
+        <div style="font-weight: 700; font-size: 16px; color: var(--text-main);">
+            <%= typeof serverName !== 'undefined' ? serverName : 'PREM Bot' %>
+        </div>
+    </a>
+    
+    <!-- CONTENEDOR DERECHO -->
+    <div style="display: flex; align-items: center; gap: 12px; margin-left: auto;">
+        
+        <!-- CAMPANA DE NOTIFICACIONES -->
+        <div class="notification-container" style="position: relative; display: inline-block; z-index: 10000;">
+            <button onclick="toggleNotificationMenu()" id="notificationBtn" style="background: var(--bg-card); border: 1px solid var(--border); color: var(--text-main); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(10px); transition: all 0.3s ease; position: relative; margin: 0 !important; padding: 0 !important;" title="Notificaciones">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                </svg>
+                <span style="position: absolute; top: 7px; right: 8px; width: 8px; height: 8px; background-color: var(--accent); border-radius: 50%; box-shadow: 0 0 8px var(--accent);"></span>
+            </button>
+            
+            <div id="notificationMenu" style="display: none; position: absolute; right: 0; top: 115%; width: 300px; background: var(--bg-sidebar); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); padding: 12px; z-index: 99999; text-align: left; backdrop-filter: blur(20px);">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 8px;">
+                    <span style="font-weight: 700; font-size: 13px; color: var(--text-main);">🔔 Notificaciones Globales</span>
+                    <span style="font-size: 11px; color: var(--text-muted); cursor: pointer;" onclick="markAsRead()">Marcar leídas</span>
+                </div>
+                
+                <div id="notificationList" style="display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto; padding-right: 4px;">
+                    <% if (typeof historial !== 'undefined' && historial.length > 0) { %>
+                        <% historial.forEach(item => { %>
+                            <div id="notif-item-<%= item.id %>" style="background: var(--bg-card); padding: 10px; border-radius: 10px; border: 1px solid var(--border);">
+                                <div style="font-size: 12px; font-weight: 700; color: var(--accent);"><%= item.title %></div>
+                                <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;"><%= item.message %></div>
+                                <div style="font-size: 9px; color: var(--text-muted); margin-top: 4px; text-align: right;"><%= item.date %></div>
+                            </div>
+                        <% }) %>
+                    <% } else { %>
+                        <div id="defaultNotif" style="background: var(--bg-card); padding: 10px; border-radius: 10px; border: 1px solid var(--border);">
+                            <div style="font-size: 12px; font-weight: 700; color: var(--accent);">🚀 Actualización PREM</div>
+                            <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Nuevas opciones de personalización ya disponibles.</div>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <!-- 1. SELECTOR DE IDIOMAS -->
+        <div class="lang-container" style="display: flex; align-items: center;">
+            <select class="lang-select" id="langSelector" onchange="location = this.value;" style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 30px; padding: 6px 14px; margin: 0;">
+                <option value="?lang=es" <%= lang === 'es' ? 'selected' : '' %>>🇪🇸 Español</option>
+                <option value="?lang=en" <%= lang === 'en' ? 'selected' : '' %>>🇺🇸 English</option>
+                <option value="?lang=pt" <%= lang === 'pt' ? 'selected' : '' %>>🇧🇷 Português</option>
+                <option value="?lang=fr" <%= lang === 'fr' ? 'selected' : '' %>>🇫🇷 Français</option>
+                <option value="?lang=de" <%= lang === 'de' ? 'selected' : '' %>>🇩🇪 Deutsch</option>
+                <option value="?lang=it" <%= lang === 'it' ? 'selected' : '' %>>🇮🇹 Italiano</option>
+                <option value="?lang=ru" <%= lang === 'ru' ? 'selected' : '' %>>🇷🇺 Русский</option>
+                <option value="?lang=ja" <%= lang === 'ja' ? 'selected' : '' %>>🇯🇵 日本語</option>
+                <option value="?lang=zh" <%= lang === 'zh' ? 'selected' : '' %>>🇨🇳 中文</option>
+                <option value="?lang=ar" <%= lang === 'ar' ? 'selected' : '' %>>🇸🇦 العربية</option>
+            </select>
+        </div>
+
+        <!-- 2. BOTÓN DE TONO DE PANTALLA (LUNA/SOL) -->
+        <button onclick="toggleTheme()" id="themeBtn" title="Cambiar tono de pantalla" style="background: var(--bg-card); border: 1px solid var(--border); color: var(--text-main); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: all 0.2s; margin: 0 !important; padding: 0 !important;">
+            <i class="fa-solid fa-moon" id="themeIcon"></i>
+        </button>
+
+        <!-- 3. PERFIL DE USUARIO CON MENÚ DESPLEGABLE -->
+        <% if (typeof user !== 'undefined' && user) { %>
+            <div class="user-dropdown-container" style="position: relative; display: inline-block; z-index: 9999;">
+                <div onclick="toggleUserMenu()" class="user-profile" style="display: flex; align-items: center; gap: 10px; background: var(--bg-card); padding: 5px 14px 5px 6px; border-radius: 30px; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.2); margin: 0; cursor: pointer;">
+                    <div style="width: 30px; height: 30px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #5865F2;">
+                        <% if (user.avatar) { %>
+                            <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+                        <% } else { %>
+                            <img src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+                        <% } %>
+                    </div>
+                    <span style="font-size: 14px; font-weight: 600; color: var(--text-main);"><%= user.global_name || user.username %></span>
+                    <i class="fa-solid fa-chevron-down" style="font-size: 11px; color: var(--text-muted); margin-left: 2px;"></i>
+                </div>
+
+                <!-- Menú Desplegable Flotante Simplificado -->
+                <div id="userDropdownMenu" style="display: none; position: absolute; right: 0; top: 50px; width: 260px; background: var(--bg-sidebar); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; padding: 8px; backdrop-filter: blur(20px);">
+                    
+                    <div style="padding: 10px 12px; border-bottom: 1px solid var(--border); margin-bottom: 6px;">
+                        <div style="font-weight: 700; font-size: 14px; color: var(--text-main);"><%= user.global_name || user.username %></div>
+                        <div style="font-size: 12px; color: var(--text-muted);">@<%= user.username %></div>
+                    </div>
+
+                    <a href="/dashboard" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'">
+                        <i class="fa-solid fa-server" style="width: 16px; color: var(--text-muted);"></i> Mis servidores
+                    </a>
+
+                    <a href="#" onclick="toggleTheme(); return false;" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'">
+                        <i class="fa-solid fa-circle-half-stroke" style="width: 16px; color: var(--text-muted);"></i> Preferencias / Tema
+                    </a>
+
+                    <% if (user.id === '931545363565908041') { %>
+                        <a href="/dashboard/manager" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: var(--accent); text-decoration: none; border-radius: 8px; font-size: 13px; font-weight: 600;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'">
+                            <i class="fa-solid fa-shield-halved" style="width: 16px;"></i> MANAGER
+                        </a>
+                    <% } %>
+
+                    <div style="border-top: 1px solid var(--border); margin-top: 4px; padding-top: 4px;">
+                        <a href="/auth/logout" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: #ef4444; text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='rgba(239,68,68,0.1)'" onmouseout="this.style.background='transparent'">
+                            <i class="fa-solid fa-arrow-right-from-bracket" style="width: 16px;"></i> Cerrar sesión
+                        </a>
+                    </div>
+                </div>
+            </div>
+        <% } %>
+    </div>
+</header>
+
+<!-- CONTENEDOR FLEXIBLE Y BARRA LATERAL (SIDEBAR) -->
+<div class="layout-container" style="display: flex; width: 100%; height: calc(100vh - 60px); overflow: visible;">
+    <sidebar style="width: 260px; flex-shrink: 0; box-sizing: border-box; display: flex; flex-direction: column; padding: 20px 15px; background: var(--bg-sidebar); border-right: 1px solid var(--border); height: 100%; overflow-y: auto;">
+        
+        <!-- BUSCADOR -->
+        <div class="search-wrapper" style="position: relative; margin-bottom: 20px;">
+            <div class="search-box-container" style="display: flex; align-items: center; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; gap: 8px;">
+                <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="searchInput" class="search-box" placeholder="Buscar módulos..." autocomplete="off" style="background: transparent; border: none; color: var(--text-main); outline: none; width: 100%; font-size: 13px;">
+                <span class="search-shortcut" style="background: rgba(128,128,128,0.15); border: 1px solid var(--border); border-radius: 6px; font-size: 10px; padding: 2px 6px; color: var(--text-muted);">Ctrl+K</span>
+            </div>
+            
+            <div id="searchResults" class="search-results-dropdown" style="display: none; position: absolute; top: 50px; left: 0; right: 0; background: var(--bg-sidebar); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); z-index: 999; max-height: 280px; overflow-y: auto; padding: 6px;">
+                <div class="search-category" style="font-size: 10px; color: var(--text-muted); font-weight: bold; text-transform: uppercase; padding: 8px 10px 4px 10px;">Módulos</div>
+                <a href="/dashboard/<%= typeof guildId !== 'undefined' ? guildId : '' %>/general?lang=<%= lang %>" class="search-result-item module-option" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 14px;">🏠 <%= t.home %></a>
+                <a href="/dashboard/<%= typeof guildId !== 'undefined' ? guildId : '' %>/ajustes?lang=<%= lang %>" class="search-result-item module-option" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 14px;">⚙️ <%= t.settings %></a>
+                <a href="/dashboard/<%= typeof guildId !== 'undefined' ? guildId : '' %>/bienvenida?lang=<%= lang %>" class="search-result-item module-option" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 14px;">👋 <%= t.welcome %></a>
+                <a href="/dashboard/<%= typeof guildId !== 'undefined' ? guildId : '' %>/niveles?lang=<%= lang %>" class="search-result-item module-option" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 14px;">⭐ <%= t.levels %></a>
+                <a href="/dashboard/<%= typeof guildId !== 'undefined' ? guildId : '' %>/personalizador?lang=<%= lang %>" class="search-result-item module-option" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 14px;">🤖 <%= t.customizer %></a>
+                <a href="/dashboard/custom-commands" class="search-result-item module-option" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 14px;">⭐ Comandos personalizados</a>
+            </div>
+        </div>
+
+        <!-- MENÚ PRINCIPAL -->
+        <div style="font-size: 10px; color: var(--text-muted); font-weight: bold; margin-bottom: 6px; text-transform: uppercase; padding: 0 10px;">
+            Menú Principal
+        </div>
+        
+        <a href="/dashboard/<%= typeof guildId !== 'undefined' ? guildId : '' %>/general?lang=<%= lang %>" class="menu-item <%= typeof activeMenu !== 'undefined' && activeMenu === 'general' ? 'active' : '' %>" style="padding: 10px 14px; color: var(--text-muted); text-decoration: none; border-radius: 10px; margin-bottom: 6px; display: flex; align-items: center; gap: 12px; font-weight: 500; font-size: 14px;">🏠 <%= t.home %></a>
+        <a href="/dashboard/<%= typeof guildId !== 'undefined' ? guildId : '' %>/ajustes?lang=<%= lang %>" class="menu-item <%= typeof activeMenu !== 'undefined' && activeMenu === 'ajustes' ? 'active' : '' %>" style="padding: 10px 14px; color: var(--text-muted); text-decoration: none; border-radius: 10px; margin-bottom: 6px; display: flex; align-items: center; gap: 12px; font-weight: 500; font-size: 14px;">⚙️ <%= t.settings %></a>
+        <a href="/dashboard/<%= typeof guildId !== 'undefined' ? guildId : '' %>/bienvenida?lang=<%= lang %>" class="menu-item <%= typeof activeMenu !== 'undefined' && activeMenu === 'bienvenida' ? 'active' : '' %>" style="padding: 10px 14px; color: var(--text-muted); text-decoration: none; border-radius: 10px; margin-bottom: 6px; display: flex; align-items: center; gap: 12px; font-weight: 500; font-size: 14px;">👋 <%= t.welcome %></a>
+        <a href="/dashboard/<%= typeof guildId !== 'undefined' ? guildId : '' %>/niveles?lang=<%= lang %>" class="menu-item <%= typeof activeMenu !== 'undefined' && activeMenu === 'niveles' ? 'active' : '' %>" style="padding: 10px 14px; color: var(--text-muted); text-decoration: none; border-radius: 10px; margin-bottom: 6px; display: flex; align-items: center; gap: 12px; font-weight: 500; font-size: 14px;">⭐ <%= t.levels %></a>
+        <a href="/dashboard/<%= typeof guildId !== 'undefined' ? guildId : '' %>/personalizador?lang=<%= lang %>" class="menu-item <%= typeof activeMenu !== 'undefined' && activeMenu === 'personalizador' ? 'active' : '' %>" style="padding: 10px 14px; color: var(--text-muted); text-decoration: none; border-radius: 10px; margin-bottom: 6px; display: flex; align-items: center; gap: 12px; font-weight: 500; font-size: 14px;">🤖 <%= t.customizer %></a>
+
+        <!-- GESTIÓN DE PREM BOT -->
+        <div style="font-size: 10px; color: var(--text-muted); font-weight: bold; margin: 15px 0 6px 10px; text-transform: uppercase;">
+            Gestión de PREM Bot
+        </div>
+
+        <a href="/dashboard/custom-bot" class="menu-item <%= typeof activeMenu !== 'undefined' && activeMenu === 'custom-bot' ? 'active' : '' %>" style="padding: 10px 14px; color: var(--text-muted); text-decoration: none; border-radius: 10px; margin-bottom: 6px; display: flex; align-items: center; gap: 12px; font-weight: 500; font-size: 14px;">
+            <i class="fa-solid fa-robot" style="width: 16px; color: var(--text-muted);"></i> Personalización de Bot
+        </a>
+
+        <a href="/dashboard/custom-commands" class="menu-item <%= typeof activeMenu !== 'undefined' && activeMenu === 'custom-commands' ? 'active' : '' %>" style="padding: 10px 14px; color: var(--text-muted); text-decoration: none; border-radius: 10px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; font-weight: 500; font-size: 14px;">
+            <span style="display: flex; align-items: center; gap: 12px;">
+                <i class="fa-solid fa-code" style="color: #facc15; text-shadow: 0 0 10px rgba(250,204,21,0.7);"></i> Comandos personalizados
+            </span>
+            <span style="background: linear-gradient(135deg, #ffffff, #fef08a, #facc15); color: #713f12; font-size: 9px; padding: 2px 6px; border-radius: 6px; font-weight: 800; letter-spacing: 0.5px; box-shadow: 0 0 10px rgba(253,224,71,0.6); text-transform: uppercase; border: 1px solid rgba(250,204,21,0.5);">PREMIUM</span>
+        </a>
+
+        <!-- COMUNIDAD -->
+        <div style="font-size: 10px; color: var(--text-muted); font-weight: bold; margin: 15px 0 6px 10px; text-transform: uppercase;">
+            Comunidad
+        </div>
+
+        <a href="https://discord.gg/tu-servidor-soporte" target="_blank" class="menu-item" style="padding: 10px 14px; color: var(--text-muted); text-decoration: none; border-radius: 10px; margin-bottom: 6px; display: flex; align-items: center; gap: 12px; font-weight: 500; font-size: 14px;">
+            <i class="fa-brands fa-discord" style="width: 16px; color: #5865F2;"></i> Servidor de Soporte
+        </a>
+
+        <a href="/documentacion" class="menu-item <%= typeof activeMenu !== 'undefined' && activeMenu === 'documentacion' ? 'active' : '' %>" style="padding: 10px 14px; color: var(--text-muted); text-decoration: none; border-radius: 10px; margin-bottom: 6px; display: flex; align-items: center; gap: 12px; font-weight: 500; font-size: 14px;">
+            <i class="fa-solid fa-book" style="width: 16px; color: var(--text-muted);"></i> Documentación / Guías
+        </a>
+
+        <a href="#" target="_blank" class="menu-item" style="padding: 10px 14px; color: var(--text-muted); text-decoration: none; border-radius: 10px; margin-bottom: 6px; display: flex; align-items: center; gap: 12px; font-weight: 500; font-size: 14px;">
+            <i class="fa-solid fa-star" style="width: 16px; color: #eab308;"></i> Votar por el bot
+        </a>
+
+        <!-- SECCIÓN DE MANAGER EN EL LATERAL (SOLO PARA TU ID) -->
+        <% if (typeof user !== 'undefined' && user && user.id === '931545363565908041') { %>
+            <div style="font-size: 10px; color: var(--accent); font-weight: bold; margin: 15px 0 6px 10px; text-transform: uppercase;">🛡️ Manager Panel</div>
+            <a href="/dashboard/manager/notificaciones" class="menu-item <%= typeof activeMenu !== 'undefined' && activeMenu === 'manager-notificaciones' ? 'active' : '' %>" style="padding: 10px 14px; color: var(--text-muted); text-decoration: none; border-radius: 10px; margin-bottom: 6px; display: flex; align-items: center; gap: 12px; font-weight: 500; font-size: 14px;">📢 Enviar Notificaciones</a>
+            <a href="/dashboard/manager/estadisticas" class="menu-item <%= typeof activeMenu !== 'undefined' && activeMenu === 'manager-estadisticas' ? 'active' : '' %>" style="padding: 10px 14px; color: var(--text-muted); text-decoration: none; border-radius: 10px; margin-bottom: 6px; display: flex; align-items: center; gap: 12px; font-weight: 500; font-size: 14px;">📊 Estadísticas de Usuarios</a>
+            <a href="/dashboard/manager/sospechosos" class="menu-item <%= typeof activeMenu !== 'undefined' && activeMenu === 'manager-sospechosos' ? 'active' : '' %>" style="padding: 10px 14px; color: var(--text-muted); text-decoration: none; border-radius: 10px; margin-bottom: 6px; display: flex; align-items: center; gap: 12px; font-weight: 500; font-size: 14px;">🕵️‍♂️ Usuarios Sospechosos</a>
+        <% } %>
+    </sidebar>
+
+<!-- SCRIPT PARA EL MENÚ, TEMAS Y SOCKET.IO DE NOTIFICACIONES -->
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+
+    socket.on('borrar-notificacion', (data) => {
+        if (data && data.id) {
+            const item = document.getElementById(`notif-item-${data.id}`);
+            if (item) item.remove();
+        } else {
+            location.reload();
+        }
+    });
+
+    socket.on('nueva-notificacion', (data) => {
+        const notifList = document.getElementById('notificationList');
+        if (notifList) {
+            const defaultNotif = document.getElementById('defaultNotif');
+            if (defaultNotif) defaultNotif.remove();
+
+            const newDiv = document.createElement('div');
+            newDiv.style.cssText = "background: var(--bg-card); padding: 10px; border-radius: 10px; border: 1px solid var(--border);";
+            newDiv.innerHTML = `
+                <div style="font-size: 12px; font-weight: 700; color: var(--accent);">${data.title}</div>
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">${data.message}</div>
+                <div style="font-size: 9px; color: var(--text-muted); margin-top: 4px; text-align: right;">Justo ahora</div>
+            `;
+            notifList.prepend(newDiv);
+
+            const badge = document.querySelector('#notificationBtn span');
+            if (badge) badge.style.display = 'block';
+        }
+    });
+
+    function toggleUserMenu() {
+        const menu = document.getElementById('userDropdownMenu');
+        if (menu) {
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+    }
+
+    function toggleNotificationMenu() {
+        const menu = document.getElementById('notificationMenu');
+        if (menu) {
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+    }
+
+    function markAsRead() {
+        const badge = document.querySelector('#notificationBtn span');
+        if (badge) badge.style.display = 'none';
+        localStorage.setItem('prem_notifications_read', 'true_' + Date.now());
+    }
+
+    function toggleTheme() {
+        const html = document.documentElement;
+        const themeIcon = document.getElementById('themeIcon');
+        const currentTheme = html.getAttribute('data-theme');
+
+        if (currentTheme === 'light') {
+            html.setAttribute('data-theme', 'dark');
+            if (themeIcon) themeIcon.className = 'fa-solid fa-moon';
+            localStorage.setItem('prem_theme', 'dark');
+        } else {
+            html.setAttribute('data-theme', 'light');
+            if (themeIcon) themeIcon.className = 'fa-solid fa-sun';
+            localStorage.setItem('prem_theme', 'light');
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const savedTheme = localStorage.getItem('prem_theme') || 'dark';
+        const html = document.documentElement;
+        const themeIcon = document.getElementById('themeIcon');
+        
+        html.setAttribute('data-theme', savedTheme);
+        if (themeIcon) {
+            themeIcon.className = savedTheme === 'light' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        }
+
+        if (localStorage.getItem('prem_notifications_read')) {
+            const badge = document.querySelector('#notificationBtn span');
+            if (badge) badge.style.display = 'none';
+        }
+    });
+
+    window.addEventListener('click', function(e) {
+        const notifContainer = document.querySelector('.notification-container');
+        const notifMenu = document.getElementById('notificationMenu');
+        if (notifContainer && notifMenu && !notifContainer.contains(e.target)) {
+            notifMenu.style.display = 'none';
+        }
+
+        const container = document.querySelector('.user-dropdown-container');
+        const menu = document.getElementById('userDropdownMenu');
+        if (container && menu && !container.contains(e.target)) {
+            menu.style.display = 'none';
+        }
+    });
+</script>
