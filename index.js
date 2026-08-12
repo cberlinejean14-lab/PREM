@@ -45,7 +45,7 @@ const distube = new DisTube(client, {
 });
 
 passport.serializeUser((user, done) => done(null, user));
-passport.deserializeUser((obj, done) => done(null, obj));
+passport.deserializeUser((obj, done) => done(obj));
 
 passport.use(new Strategy({
     clientID: process.env.CLIENT_ID || 'TU_CLIENT_ID',
@@ -105,6 +105,33 @@ async function obtenerInfoUsuario(userId) {
     } catch (e) {}
     return { username, avatar };
 }
+
+// --- FUNCIÓN AUXILIAR PARA AUTOMOD EN CADA SERVIDOR ---
+async function configurarAutoMod(guild) {
+    try {
+        const rules = await guild.autoModerationRules.fetch();
+        const existingRule = rules.find(r => r.name === 'PREM AutoMod - Protección Automática');
+
+        if (!existingRule) {
+            await guild.autoModerationRules.create({
+                name: 'PREM AutoMod - Protección Automática',
+                eventType: 1, // GuildMessageSend
+                triggerType: 5, // Mention Spam (evita spam masivo de menciones)
+                triggerMetadata: {
+                    mentionTotalLimit: 5, // Límite de menciones permitidas
+                },
+                actions: [
+                    { type: 1 }, // Bloquear el mensaje automáticamente
+                ],
+                enabled: true,
+            });
+            console.log(`🛡️ Regla de AutoMod creada exitosamente en: ${guild.name}`);
+        }
+    } catch (error) {
+        console.error(`⚠️ No se pudo crear la regla de AutoMod en ${guild.name} (¿faltan permisos de Administrador/Gestionar Servidor?):`, error.message);
+    }
+}
+// ------------------------------------------------------
 
 app.get('/', async (req, res) => {
     if (req.query.lang) {
@@ -370,18 +397,31 @@ client.on('interactionCreate', async interaction => {
     }
 });
 
+// --- EVENTO PARA CUANDO EL BOT ENTRA A UN NUEVO SERVIDOR ---
+client.on('guildCreate', guild => {
+    console.log(`📥 El bot se ha unido a un nuevo servidor: ${guild.name} (${guild.id})`);
+    configurarAutoMod(guild);
+});
+// -----------------------------------------------------------
+
 client.once('clientReady', async () => {
     console.log(`🤖 ¡Bot en línea como ${client.user.tag}!`);
 
     // --- INICIALIZAR SISTEMA DE RESPALDOS AQUÍ ---
-    iniciarSistemaBackups();
+    iniciarSistemaBackups();[cite: 1]
     // --------------------------------------------
+
+    // --- CONFIGURAR AUTOMOD EN TODOS LOS SERVIDORES ACTUALES ---
+    client.guilds.cache.forEach(guild => {
+        configurarAutoMod(guild);
+    });
+    // -----------------------------------------------------------
 
     client.user.setPresence({
         activities: [{
             name: 'Custom Status',
             type: 4, 
-            state: '✨ Original de PREM'
+            state: '✨ Original de PREM'[cite: 1]
         }],
         status: 'online'
     });
@@ -389,11 +429,11 @@ client.once('clientReady', async () => {
     const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
 
     try {
-        await rest.put(Routes.applicationCommands(client.user.id), { body: slashCommandsArray });
-        console.log('✅ ¡Comandos de barra (/) cargados y registrados exitosamente desde la carpeta commands!');
+        await rest.put(Routes.applicationCommands(client.user.id), { body: slashCommandsArray });[cite: 1]
+        console.log('✅ ¡Comandos de barra (/) cargados y registrados exitosamente desde la carpeta commands!');[cite: 1]
     } catch (error) {
         console.error(error);
     }
 });
 
-client.login(process.env.TOKEN);
+client.login(process.env.TOKEN);[cite: 1]
