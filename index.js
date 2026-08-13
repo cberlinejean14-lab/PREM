@@ -55,6 +55,7 @@ passport.use(new Strategy({
 const { iniciarDashboard, app } = require('./dashboard.js');
 
 // --- SEGURIDAD Y SESIONES ---
+app.set('trust proxy', 1); // <--- VITAL EN RAILWAY PARA LAS COOKIES Y LOGIN
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 200 }));
 
@@ -231,7 +232,6 @@ app.get('/dashboard', checkAuth, async (req, res) => {
         }); 
     } catch (error) {
         console.error("🔥 ERROR DETALLADO EN /DASHBOARD:", error);
-        // Esto mostrará el error real en la web en lugar de [object Object]
         return res.status(500).send(`
             <h1>Error en el servidor</h1>
             <pre style="color: red;">${error.stack}</pre>
