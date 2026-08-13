@@ -203,23 +203,31 @@ app.get('/', async (req, res) => {
     res.send('Dashboard activo');
 });
 
-// --- RUTA DASHBOARD SELECT ---
+// --- RUTA DASHBOARD SELECT A PRUEBA DE FALLOS ---
 app.get('/dashboard', checkAuth, async (req, res) => {
     try {
         if (req.query.lang) req.session.lang = req.query.lang;
         const currentLang = req.query.lang || req.session.lang || 'es';
-        const historial = await db.get('historial_notificaciones') || [];
+        
+        let historial = [];
+        try {
+            historial = await db.get('historial_notificaciones') || [];
+        } catch (e) { historial = []; }
+
         const botUser = client.user ? { username: client.user.username, avatar: client.user.displayAvatarURL() } : null;
 
-        const guildsList = (req.user && Array.isArray(req.user.guilds)) ? req.user.guilds.map(guild => ({
-            id: guild.id || '',
-            name: guild.name || 'Servidor sin nombre',
-            icon: guild.icon || null,
-            owner: Boolean(guild.owner),
-            permissions: guild.permissions || 0,
-            administrator: Boolean(guild.administrator),
-            botInGuild: client.guilds.cache.has(guild.id)
-        })) : [];
+        let guildsList = [];
+        if (req.user && Array.isArray(req.user.guilds)) {
+            guildsList = req.user.guilds.map(guild => ({
+                id: guild.id || '',
+                name: guild.name || 'Servidor sin nombre',
+                icon: guild.icon || null,
+                owner: Boolean(guild.owner),
+                permissions: guild.permissions || 0,
+                administrator: Boolean(guild.administrator),
+                botInGuild: client.guilds && client.guilds.cache ? client.guilds.cache.has(guild.id) : false
+            }));
+        }
 
         return res.render('dashboard-select', { 
             guilds: guildsList, 
@@ -231,10 +239,12 @@ app.get('/dashboard', checkAuth, async (req, res) => {
             botUser
         }); 
     } catch (error) {
-        console.error("🔥 ERROR DETALLADO EN /DASHBOARD:", error);
+        const errorMessage = error && error.stack ? error.stack : JSON.stringify(error, null, 2);
+        console.error("🔥 ERROR CRÍTICO EN /DASHBOARD:", errorMessage);
         return res.status(500).send(`
-            <h1>Error en el servidor</h1>
-            <pre style="color: red;">${error.stack}</pre>
+            <h1 style="color: red;">Error Crítico en el Dashboard</h1>
+            <p>Copia este error exactamente:</p>
+            <pre style="background: #111; color: #ff5252; padding: 15px; border-radius: 5px; white-space: pre-wrap;">${errorMessage}</pre>
         `);
     }
 });
