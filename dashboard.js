@@ -361,13 +361,15 @@ function iniciarDashboard(client) {
         res.status(404).render('404');
     });
 
+    // --- MANEJADOR DE ERRORES SEGURO ---
     app.use((err, req, res, next) => {
-        console.error('❌ ERROR REAL EN EL SERVIDOR:', err.message);
-        const errMessage = err && err.stack ? err.stack : (err ? String(err) : 'Error desconocido');
-        res.status(500).send(`<h3>Error en el servidor:</h3><pre>${errMessage}</pre>`);
+        const errorText = err ? (err.stack || err.message || String(err)) : 'Error desconocido';
+        console.error('❌ ERROR REAL EN EL SERVIDOR:', errorText);
+        res.status(500).send(`
+            <h3 style="color: #ff5252;">Error en el servidor:</h3>
+            <pre style="background: #111; color: #ff5252; padding: 15px; border-radius: 5px; white-space: pre-wrap;">${errorText}</pre>
+        `);
     });
-
-    // Se eliminó el `server.listen` interno de aquí para evitar conflictos con el puerto único de index.js
 }
 
 module.exports = { iniciarDashboard, app };
