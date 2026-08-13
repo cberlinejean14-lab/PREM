@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const helmet = require('helmet'); 
-const http = http = require('http'); 
+const http = require('http');
 const { Server } = require('socket.io'); 
 const { QuickDB } = require('quick.db');
 const rateLimit = require('express-rate-limit'); 
