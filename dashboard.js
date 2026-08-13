@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const helmet = require('helmet'); 
-const http = require('http'); 
+const http = http = require('http'); 
 const { Server } = require('socket.io'); 
 const { QuickDB } = require('quick.db');
 const rateLimit = require('express-rate-limit'); 
@@ -11,7 +11,7 @@ const db = new QuickDB();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(helmet());
+app.use(helmet({ contentSecurityPolicy: false }));
 
 const server = http.createServer(app);
 const io = new Server(server);
@@ -19,7 +19,7 @@ const io = new Server(server);
 app.set('io', io);
 
 io.on('connection', (socket) => {
-    console.log('Un usuario se ha conectado al panel en tiempo real.');
+    // Silenciado o controlado para evitar spam masivo de logs
 });
 
 app.set('view engine', 'ejs');
@@ -81,7 +81,7 @@ function iniciarDashboard(client) {
                 listaReviews 
             });
         } catch (error) {
-            console.error("Error en ruta raíz:", error);
+            console.error("Error en ruta raíz:", error.message);
             return res.status(500).send(`<h3>Error en el servidor:</h3><pre>${error && error.message ? error.message : String(error)}</pre>`);
         }
     });
@@ -243,7 +243,7 @@ function iniciarDashboard(client) {
                 t: traducciones[lang] || traducciones.es
             }); 
         } catch (error) {
-            console.error("🔥 ERROR REAL EN /DASHBOARD:", error);
+            console.error("🔥 ERROR REAL EN /DASHBOARD:", error.message);
             const errorMsg = error instanceof Error ? error.stack : JSON.stringify(error, Object.getOwnPropertyNames(error), 2);
             return res.status(500).send(`<h3>Error exacto en el servidor:</h3><pre style="background: #1e1e1e; color: #ff6b6b; padding: 15px; border-radius: 5px; white-space: pre-wrap;">${errorMsg}</pre>`);
         }
@@ -362,14 +362,12 @@ function iniciarDashboard(client) {
     });
 
     app.use((err, req, res, next) => {
-        console.error('❌ ERROR REAL EN EL SERVIDOR:', err);
+        console.error('❌ ERROR REAL EN EL SERVIDOR:', err.message);
         const errMessage = err && err.stack ? err.stack : (err ? String(err) : 'Error desconocido');
         res.status(500).send(`<h3>Error en el servidor:</h3><pre>${errMessage}</pre>`);
     });
 
-    server.listen(PORT, '0.0.0.0', () => {
-        console.log(`🌐 Dashboard corriendo en el puerto ${PORT}`);
-    });
+    // Se eliminó el `server.listen` interno de aquí para evitar conflictos con el puerto único de index.js
 }
 
 module.exports = { iniciarDashboard, app };

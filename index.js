@@ -231,12 +231,10 @@ app.get('/dashboard', checkAuth, async (req, res) => {
         }); 
     } catch (error) {
         console.error("🔥 ERROR DETALLADO EN /DASHBOARD:", error);
-        const errorMsg = error instanceof Error ? error.stack : JSON.stringify(error, Object.getOwnPropertyNames(error), 2);
+        // Esto mostrará el error real en la web en lugar de [object Object]
         return res.status(500).send(`
-            <div style="background: #1e1e1e; color: #ff6b6b; padding: 25px; font-family: monospace; border-radius: 8px; margin: 20px;">
-                <h2>¡Ocurrió un error exacto!</h2>
-                <pre style="white-space: pre-wrap; background: #2d2d2d; padding: 15px; border-radius: 5px;">${errorMsg}</pre>
-            </div>
+            <h1>Error en el servidor</h1>
+            <pre style="color: red;">${error.stack}</pre>
         `);
     }
 });
@@ -331,7 +329,7 @@ if (fs.existsSync(commandsPath)) {
     const slashCommandsArray = [];
 
     for (const file of commandFiles) {
-        const filePath = path.join(commandsPath, file);
+        const filePath = path.join(__dirname, 'commands', file);
         const command = require(filePath);
         if ('data' in command && 'execute' in command) {
             client.commands.set(command.data.name, command);
