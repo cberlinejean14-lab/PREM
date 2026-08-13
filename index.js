@@ -40,7 +40,7 @@ passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((obj, done) => done(obj));
 
 const callbackURL = process.env.NODE_ENV === 'production' 
-    ? 'https://prem-production-1585.up.railway.app/auth/discord/callback'
+    ? 'https://prem-production-ef3a.up.railway.app/auth/discord/callback'
     : (process.env.CALLBACK_URL || 'http://localhost:3000/auth/discord/callback');
 
 passport.use(new Strategy({
