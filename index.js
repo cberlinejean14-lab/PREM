@@ -63,13 +63,13 @@ app.get('/dashboard', (req, res) => {
     });
 });
 
-// 5. Iniciar sesión del bot de Discord y levantar el servidor web
+// 5. Iniciar sesión del bot de Discord y levantar el servidor web con el puerto de Railway y 0.0.0.0
 const TOKEN = process.env.DISCORD_TOKEN;
+const PORT = process.env.PORT || 3000;
 
 client.login(TOKEN).then(() => {
-    const PORT = process.env.PORT || 3000;
-    app.listen(PORT, () => {
-        console.log(`Bot conectado y servidor web corriendo en http://localhost:${PORT}`);
+    app.listen(PORT, '0.0.0.0', () => {
+        console.log(`Bot conectado y servidor web corriendo en el puerto ${PORT}`);
     });
 }).catch(err => {
     console.error('Error al iniciar sesión con el bot de Discord:', err);
