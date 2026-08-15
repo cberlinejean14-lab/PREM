@@ -64,7 +64,7 @@ app.get('/dashboard', (req, res) => {
 });
 
 // 5. Iniciar sesión del bot de Discord y levantar el servidor web con el puerto de Railway y 0.0.0.0
-const TOKEN = process.env.DISCORD_TOKEN;
+const TOKEN = process.env.TOKEN;
 const PORT = process.env.PORT || 3000;
 
 client.login(TOKEN).then(() => {
