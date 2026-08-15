@@ -1,379 +1,76 @@
 require('dotenv').config();
-const fs = require('node:fs');
-const path = require('node:path');
-const { QuickDB } = require("quick.db");
-const db = new QuickDB();
+const { Client, GatewayIntentBits } = require('discord.js');
+const express = require('express');
+const path = require('path');
 
-const { Client, GatewayIntentBits, EmbedBuilder, REST, Routes, SlashCommandBuilder, Collection } = require('discord.js');
-const { DisTube } = require('distube');
-const { SpotifyPlugin } = require('@distube/spotify');
-const { SoundCloudPlugin } = require('@distube/soundcloud');
-const { YtDlpPlugin } = require('@distube/yt-dlp');
+const app = express();
 
-const passport = require('passport');
-const Strategy = require('passport-discord').Strategy;
-const session = require('express-session');
-const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
-
-const { iniciarSistemaBackups } = require('./utils/backup');
-
+// 1. Inicializar el cliente de Discord con sus Intents necesarios
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.MessageContent,
-        GatewayIntentBits.GuildMembers,
-        GatewayIntentBits.GuildVoiceStates,
-        GatewayIntentBits.DirectMessages,
-    ],
-    partials: ['Channel', 'Message', 'GuildMember', 'User']
+        GatewayIntentBits.GuildMembers
+    ]
 });
 
-client.commands = new Collection();
+// Configurar el motor de vistas EJS y la carpeta pública
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+app.use(express.static(path.join(__dirname, 'public')));
 
-const distube = new DisTube(client, {
-    plugins: [new SpotifyPlugin(), new SoundCloudPlugin(), new YtDlpPlugin()]
-});
-
-passport.serializeUser((user, done) => done(null, user));
-passport.deserializeUser((obj, done) => done(obj));
-
-const callbackURL = process.env.NODE_ENV === 'production' 
-    ? 'https://prem-production-ef3a.up.railway.app/auth/discord/callback'
-    : (process.env.CALLBACK_URL || 'http://localhost:3000/auth/discord/callback');
-
-passport.use(new Strategy({
-    clientID: process.env.CLIENT_ID || '1534632950224781548',
-    clientSecret: process.env.CLIENT_SECRET || 'D4zUqryJU37CFmXqIAnJMoWEGsItV_LN',
-    callbackURL: callbackURL,
-    scope: ['identify', 'guilds']
-}, (accessToken, refreshToken, profile, done) => {
-    return done(null, profile);
-}));
-
-const { iniciarDashboard, app } = require('./dashboard.js');
-
-// --- SEGURIDAD Y SESIONES ---
-app.set('trust proxy', 1); // <--- VITAL EN RAILWAY PARA LAS COOKIES Y LOGIN
-app.use(helmet({ contentSecurityPolicy: false }));
-app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 200 }));
-
-app.use(session({
-    secret: process.env.SESSION_SECRET || 'clave_super_secreta_prem_2026',
-    resave: true,
-    saveUninitialized: true,
-    cookie: { 
-        secure: false, 
-        httpOnly: true,
-        maxAge: 30 * 24 * 60 * 60 * 1000 
-    }
-}));
-
-app.use(passport.initialize());
-app.use(passport.session());
-
-// --- 1. RUTAS DE AUTENTICACIÓN ---
-app.get('/auth/discord', passport.authenticate('discord', { scope: ['identify', 'guilds'] }));
-
-app.get('/auth/discord/callback', 
-    passport.authenticate('discord', { failureRedirect: '/' }), 
-    (req, res) => {
-        const guildId = req.query.guild_id;
-        if (guildId) {
-            return res.redirect(`/dashboard/${guildId}`);
-        }
-        res.redirect('/dashboard');
-    }
-);
-
-app.get('/auth/logout', async (req, res) => {
+// 2. Ruta API para alimentar las estadísticas en tiempo real
+app.get('/api/stats', async (req, res) => {
     try {
-        await new Promise((resolve, reject) => {
-            req.logout((err) => {
-                if (err) return reject(err);
-                resolve();
-            });
+        const serverCount = client.guilds.cache.size;
+        // Suma los miembros de todos los servidores en caché de forma segura
+        const totalUsers = client.guilds.cache.reduce((acc, guild) => acc + guild.memberCount, 0);
+        const totalCommands = 2800000; // Puedes cambiarlo si tienes un contador en base de datos
+
+        res.json({
+            servers: serverCount.toLocaleString() + '+',
+            users: (totalUsers / 1000).toFixed(1).replace('.0', '') + 'K+',
+            commands: (totalCommands / 1000000).toFixed(1).replace('.0', '') + 'M+'
         });
-        if (req.session) {
-            req.session.destroy(() => {
-                res.redirect('/');
-            });
-        } else {
-            res.redirect('/');
-        }
-    } catch (err) {
-        console.error("Error al cerrar sesión:", err);
-        res.redirect('/');
-    }
-});
-
-function checkAuth(req, res, next) {
-    if (req.isAuthenticated && req.isAuthenticated()) {
-        return next();
-    }
-    return res.redirect('/auth/discord');
-}
-
-async function obtenerInfoUsuario(userId) {
-    let username = `Usuario_${userId.substring(0, 4)}`;
-    let avatar = 'https://cdn.discordapp.com/embed/avatars/0.png';
-    try {
-        const user = await client.users.fetch(userId, { force: true });
-        if (user) {
-            username = user.username;
-            if (user.avatar) {
-                avatar = user.displayAvatarURL({ dynamic: true, size: 128 });
-            }
-        }
-    } catch (e) {}
-    return { username, avatar };
-}
-
-async function configurarAutoMod(guild) {
-    try {
-        const rules = await guild.autoModerationRules.fetch();
-        if (!rules.find(r => r.name === 'PREM AutoMod - Protección Automática')) {
-            await guild.autoModerationRules.create({
-                name: 'PREM AutoMod - Protección Automática',
-                eventType: 1, triggerType: 5,
-                triggerMetadata: { mentionTotalLimit: 5 },
-                actions: [{ type: 1 }], enabled: true,
-            });
-        }
-    } catch (error) { console.error(`⚠️ AutoMod error:`, error.message); }
-}
-
-// --- 2. RUTA PRINCIPAL ---
-app.get('/', async (req, res) => {
-    if (req.query.lang) req.session.lang = req.query.lang;
-    const currentLang = req.query.lang || req.session.lang || 'es';
-
-    const serverCount = client.guilds.cache.size;
-    const totalUsers = client.guilds.cache.reduce((acc, guild) => acc + guild.memberCount, 0);
-    const totalCommands = await db.get('totalComandosEjecutados') || 15420;
-    const historial = await db.get('historial_notificaciones') || [];
-    const todasLasReviews = await db.get('reviews_globales') || [];
-    const listaReviews = todasLasReviews.filter(rev => rev.estrellas >= 4);
-
-    const allEntries = await db.all();
-    
-    const getRanking = async (prefix) => {
-        const map = {};
-        allEntries.forEach(entry => {
-            if (entry.id.startsWith(prefix)) {
-                const userId = entry.id.split('_')[1];
-                map[userId] = (map[userId] || 0) + entry.value;
-            }
-        });
-        const sorted = Object.keys(map).map(id => ({ id, value: map[id] })).sort((a, b) => b.value - a.value).slice(0, 10);
-        const ranking = [];
-        for (const item of sorted) {
-            const info = await obtenerInfoUsuario(item.id);
-            ranking.push({ ...item, ...info });
-        }
-        return ranking;
-    };
-
-    const rankingXP = await getRanking('xp_');
-    const rankingDinero = await getRanking('dinero_');
-    const rankingMusica = await getRanking('musica_');
-
-    const botUser = client.user ? { 
-        username: client.user.username, 
-        avatar: client.user.displayAvatarURL({ dynamic: true, size: 128 }) 
-    } : { username: "PREM Bot", avatar: "https://cdn.discordapp.com/embed/avatars/0.png" };
-
-    if (typeof res.render === 'function') {
-        return res.render('index', {
-            user: req.user || null,
-            botUser,
-            lang: currentLang,
-            currentLang,
-            serverCount,
-            totalUsers,
-            totalCommands,
-            listaReviews,
-            rankingXP,
-            rankingDinero,
-            rankingMusica,
-            historial
-        });
-    }
-    res.send('Dashboard activo');
-});
-
-// --- RUTA DASHBOARD SELECT A PRUEBA DE FALLOS ---
-app.get('/dashboard', checkAuth, async (req, res) => {
-    try {
-        if (req.query.lang) req.session.lang = req.query.lang;
-        const currentLang = req.query.lang || req.session.lang || 'es';
-        
-        let historial = [];
-        try {
-            historial = await db.get('historial_notificaciones') || [];
-        } catch (e) { historial = []; }
-
-        const botUser = client.user ? { username: client.user.username, avatar: client.user.displayAvatarURL() } : null;
-
-        let guildsList = [];
-        if (req.user && Array.isArray(req.user.guilds)) {
-            guildsList = req.user.guilds.map(guild => ({
-                id: guild.id || '',
-                name: guild.name || 'Servidor sin nombre',
-                icon: guild.icon || null,
-                owner: Boolean(guild.owner),
-                permissions: guild.permissions || 0,
-                administrator: Boolean(guild.administrator),
-                botInGuild: client.guilds && client.guilds.cache ? client.guilds.cache.has(guild.id) : false
-            }));
-        }
-
-        return res.render('dashboard-select', { 
-            guilds: guildsList, 
-            serverName: 'PREM Bot', 
-            historial,
-            lang: currentLang,
-            currentLang,
-            user: req.user || { username: 'Invitado', id: '0' },
-            botUser
-        }); 
     } catch (error) {
-        const errorMessage = error && error.stack ? error.stack : JSON.stringify(error, null, 2);
-        console.error("🔥 ERROR CRÍTICO EN /DASHBOARD:", errorMessage);
-        return res.status(500).send(`
-            <h1 style="color: red;">Error Crítico en el Dashboard</h1>
-            <p>Copia este error exactamente:</p>
-            <pre style="background: #111; color: #ff5252; padding: 15px; border-radius: 5px; white-space: pre-wrap;">${errorMessage}</pre>
-        `);
+        console.error('Error al obtener estadísticas en tiempo real:', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
     }
 });
 
-app.get('/variables', async (req, res) => {
-    if (req.query.lang) req.session.lang = req.query.lang;
-    const currentLang = req.query.lang || req.session.lang || 'es';
-    const historial = await db.get('historial_notificaciones') || [];
-    const botUser = client.user ? { username: client.user.username, avatar: client.user.displayAvatarURL() } : null;
-    
-    res.render('variables', { user: req.user || null, botUser, lang: currentLang, currentLang, historial });
-});
-
-app.get('/dashboard/custom-bot', checkAuth, async (req, res) => {
-    if (req.query.lang) req.session.lang = req.query.lang;
-    const currentLang = req.query.lang || req.session.lang || 'es';
-    const historial = await db.get('historial_notificaciones') || [];
-    const botUser = client.user ? { username: client.user.username, avatar: client.user.displayAvatarURL() } : null;
-
-    res.render('custom-bot', {
-        user: req.user,
-        botUser,
-        lang: currentLang,
-        currentLang,
-        historial,
-        activeMenu: 'custom-bot'
+// 3. Ruta Principal (Página de inicio)
+app.get('/', (req, res) => {
+    res.render('index', { 
+        user: req.user || null,
+        currentLang: req.query.lang || 'es',
+        rankingDinero: [],
+        rankingXP: [],
+        rankingMusica: [],
+        listaReviews: []
     });
 });
 
-app.get('/dashboard/custom-commands', checkAuth, async (req, res) => {
-    if (req.query.lang) req.session.lang = req.query.lang;
-    const currentLang = req.query.lang || req.session.lang || 'es';
-    const historial = await db.get('historial_notificaciones') || [];
-    const botUser = client.user ? { username: client.user.username, avatar: client.user.displayAvatarURL() } : null;
-
-    try {
-        const esPremium = await db.get(`premium_user_${req.user.id}`) || false;
-        const viewName = esPremium ? 'custom-commands' : 'premium-required';
-
-        res.render(viewName, {
-            user: req.user,
-            botUser,
-            lang: currentLang,
-            currentLang,
-            historial,
-            activeMenu: 'custom-commands'
-        });
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Error al cargar comandos personalizados");
-    }
-});
-
-app.get('/tos', async (req, res) => {
-    if (req.query.lang) req.session.lang = req.query.lang;
-    const currentLang = req.query.lang || req.session.lang || 'es';
-    const historial = await db.get('historial_notificaciones') || [];
-    const botUser = client.user ? { username: client.user.username, avatar: client.user.displayAvatarURL() } : null;
-    res.render('tos', { lang: currentLang, currentLang, user: req.user, botUser, historial });
-});
-
-app.get('/privacy', async (req, res) => {
-    if (req.query.lang) req.session.lang = req.query.lang;
-    const currentLang = req.query.lang || req.session.lang || 'es';
-    const historial = await db.get('historial_notificaciones') || [];
-    const botUser = client.user ? { username: client.user.username, avatar: client.user.displayAvatarURL() } : null;
-
-    res.render('privacy', { 
-        lang: currentLang, 
-        currentLang, 
-        user: req.user,
-        botUser,
-        historial 
+// 4. Ruta del Dashboard
+app.get('/dashboard', (req, res) => {
+    const guilds = [
+        { id: '1', name: 'Servidor de Ejemplo 1', icon: null, owner: true, permissions: 8 },
+        { id: '2', name: 'Servidor de Ejemplo 2', icon: null, owner: false, permissions: 8 }
+    ];
+    
+    res.render('dashboard-select', { 
+        user: req.user || { username: 'Ganzita', id: '123456789', avatar: 'default' },
+        guilds: guilds,
+        lang: req.query.lang || 'es'
     });
 });
 
-app.get('/documentacion', async (req, res) => {
-    if (req.query.lang) req.session.lang = req.query.lang;
-    const currentLang = req.query.lang || req.session.lang || 'es';
-    const historial = await db.get('historial_notificaciones') || [];
-    const botUser = client.user ? { username: client.user.username, avatar: client.user.displayAvatarURL() } : null;
-    
-    res.render('documentation', { user: req.user, botUser, lang: currentLang, currentLang, historial });
-});
+// 5. Iniciar sesión del bot de Discord y levantar el servidor web
+const TOKEN = process.env.DISCORD_TOKEN;
 
-// --- 3. INICIALIZAR EL DASHBOARD AL FINAL ---
-iniciarDashboard(client);
-
-const commandsPath = path.join(__dirname, 'commands');
-if (fs.existsSync(commandsPath)) {
-    const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
-    const slashCommandsArray = [];
-
-    for (const file of commandFiles) {
-        const filePath = path.join(__dirname, 'commands', file);
-        const command = require(filePath);
-        if ('data' in command && 'execute' in command) {
-            client.commands.set(command.data.name, command);
-            slashCommandsArray.push(command.data.toJSON());
-        }
-    }
-}
-
-client.on('interactionCreate', async interaction => {
-    if (!interaction.isChatInputCommand()) return;
-    const command = client.commands.get(interaction.commandName);
-    if (!command) return;
-    try { await command.execute(interaction); } catch (error) { console.error(error); }
-});
-
-client.on('guildCreate', guild => { configurarAutoMod(guild); });
-
-client.once('clientReady', async () => {
-    console.log(`🤖 ¡Bot en línea como ${client.user.tag}!`);
-    iniciarSistemaBackups();
-    client.guilds.cache.forEach(guild => configurarAutoMod(guild));
-    
-    client.user.setPresence({ activities: [{ name: '✨ Original de PREM', type: 4 }], status: 'online' });
-
-    const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
-    try {
-        await rest.put(Routes.applicationCommands(client.user.id), { body: [] });
-        console.log('✅ Comandos cargados correctamente.');
-    } catch (error) { console.error(error); }
-});
-
-client.login(process.env.TOKEN);
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Servidor web activo en el puerto ${PORT}`);
+client.login(TOKEN).then(() => {
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+        console.log(`Bot conectado y servidor web corriendo en http://localhost:${PORT}`);
+    });
+}).catch(err => {
+    console.error('Error al iniciar sesión con el bot de Discord:', err);
 });

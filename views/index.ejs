@@ -1,586 +1,218 @@
 <!DOCTYPE html>
-<html lang="<%= typeof lang !== 'undefined' ? lang : 'es' %>" data-theme="dark">
+<html lang="es" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PREM - Discord Bot</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <%- include('partials/head') %>
+    <link rel="stylesheet" href="/css/style.css">
     <style>
+        /* --- VARIABLES GLOBALES Y DE TEMA (FONDO NEGRO CON MORADO) --- */
         :root {
-            --bg-gradient: radial-gradient(circle at 50% 0%, #4c1d95, #1e1b4b, #09090b);
-            --card-bg: rgba(20, 18, 35, 0.65);
-            --bg-sidebar: #12101f;
-            --hover-sidebar: rgba(255, 255, 255, 0.05);
+            --bg-main: #0b0416;
+            --bg-gradient: radial-gradient(circle at 65% 35%, #4c1d95 0%, #1e1b4b 50%, #0b0416 85%);
+            --card-bg: rgba(25, 20, 45, 0.7);
+            --border-color: rgba(192, 132, 252, 0.3);
             --text-color: #ffffff;
-            --text-main: #ffffff;
-            --text-muted: #a78bfa;
+            --text-muted: #d8b4fe;
             --accent-color: #c084fc;
-            --accent: #c084fc;
-            --accent-glow: rgba(192, 132, 252, 0.4);
-            --border-color: rgba(192, 132, 252, 0.15);
-            --border: rgba(192, 132, 252, 0.15);
-            --nav-bg: rgba(15, 12, 28, 0.8);
-            --badge-bg: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(192, 132, 252, 0.05));
-            --badge-text: #e9d5ff;
-            --badge-border: rgba(192, 132, 252, 0.3);
-            --shimmer-color: rgba(255, 255, 255, 0.25);
+            --particle-color: #ffffff;
         }
 
         [data-theme="light"] {
-            --bg-gradient: radial-gradient(circle at 50% 0%, #e9d5ff, #f3e8ff, #ffffff);
-            --card-bg: rgba(255, 255, 255, 0.8);
-            --bg-sidebar: #f8fafc;
-            --hover-sidebar: rgba(0, 0, 0, 0.05);
+            --bg-main: #f5f3ff;
+            --bg-gradient: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --border-color: rgba(147, 51, 234, 0.2);
             --text-color: #1e1b4b;
-            --text-main: #1e1b4b;
             --text-muted: #6b21a8;
             --accent-color: #9333ea;
-            --accent: #9333ea;
-            --accent-glow: rgba(147, 51, 234, 0.25);
-            --border-color: rgba(147, 51, 234, 0.2);
-            --border: rgba(147, 51, 234, 0.2);
-            --nav-bg: rgba(255, 255, 255, 0.9);
-            --badge-bg: linear-gradient(135deg, rgba(147, 51, 234, 0.12), rgba(168, 85, 247, 0.06));
-            --badge-text: #581c87;
-            --badge-border: rgba(147, 51, 234, 0.35);
-            --shimmer-color: rgba(75, 85, 99, 0.35);
+            --particle-color: #000000;
         }
 
         body {
-            background: var(--bg-gradient);
+            margin: 0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-main);
+            background-image: var(--bg-gradient);
             background-attachment: fixed;
             color: var(--text-color);
-            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: background 0.3s ease, color 0.3s ease;
-        }
-
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 50px;
-            background-color: var(--nav-bg);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border-color);
-            position: relative;
-            z-index: 1000;
-        }
-
-        .nav-left {
-            display: flex;
-            align-items: center;
-            gap: 25px;
-        }
-
-        .brand-link {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            text-decoration: none;
-            color: var(--text-color);
-        }
-
-        .bot-avatar {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            object-fit: cover;
-            box-shadow: 0 0 15px rgba(192, 132, 252, 0.7);
-            border: 2px solid var(--accent-color);
-        }
-
-        .bot-name {
-            font-weight: 800;
-            font-size: 1.4rem;
-            letter-spacing: 0.5px;
-            background: linear-gradient(45deg, var(--text-color), var(--accent-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .login-btn {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
-            padding: 10px 22px;
-            border-radius: 25px;
-            font-weight: 600;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-        }
-
-        .login-btn:hover {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 15px var(--accent-glow);
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            padding: 6px 16px;
-            border-radius: 25px;
-            backdrop-filter: blur(10px);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .user-profile:hover {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 15px var(--accent-glow);
-        }
-
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .theme-btn {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-            font-size: 1.1rem;
-        }
-
-        .theme-btn:hover {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 15px var(--accent-glow);
+            transition: background-color 0.3s ease, background-image 0.3s ease, color 0.3s ease;
         }
 
         .hero {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            max-width: 1200px;
-            margin: auto;
-            padding: 60px 25px;
-            gap: 50px;
-            position: relative;
-            z-index: 1;
+            justify-content: center;
+            gap: 60px;
+            padding: 30px 4%;
+            min-height: 75vh;
+            margin-top: 60px;
         }
-
         .hero-content {
-            max-width: 600px;
-        }
-
-        .badge-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .badge {
-            background: rgba(192, 132, 252, 0.1);
-            color: var(--accent-color);
-            border: 1px solid var(--border-color);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            display: inline-block;
-        }
-
-        .prem-original-badge {
-            background: var(--badge-bg);
-            color: var(--badge-text);
-            border: 1px solid var(--badge-border);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            box-shadow: 0 0 15px var(--accent-glow);
-            transition: all 0.3s ease;
-        }
-
-        h1 {
-            font-size: 3.2rem;
-            font-weight: 800;
-            margin: 0 0 20px 0;
-            line-height: 1.2;
-            letter-spacing: -1px;
-        }
-
-        p {
-            color: var(--text-muted);
-            font-size: 1.15rem;
-            line-height: 1.6;
-            margin-bottom: 35px;
-        }
-
-        .hero-buttons {
-            display: flex;
-            gap: 15px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #a855f7, var(--accent-color));
-            color: white;
-            text-decoration: none;
-            padding: 14px 28px;
-            border-radius: 14px;
-            font-weight: 700;
-            box-shadow: 0 4px 20px var(--accent-glow);
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 25px var(--accent-glow);
-        }
-
-        .btn-secondary {
-            background: var(--card-bg);
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
-            text-decoration: none;
-            padding: 14px 28px;
-            border-radius: 14px;
-            font-weight: 700;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .btn-secondary:hover {
-            border-color: var(--accent-color);
-            transform: translateY(-3px);
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-12px); }
+            flex: 0 1 520px;
         }
 
         .avatar-container {
             position: relative;
-            width: 380px;
-            height: 380px;
-            animation: float 4s ease-in-out infinite;
+            width: 360px;
+            height: 360px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: floatAvatar 4s ease-in-out infinite;
         }
 
-        .electric-avatar {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid var(--accent-color);
-            box-shadow: 0 0 25px var(--accent-glow);
-            display: block;
+        @keyframes floatAvatar {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
         }
 
         .spark {
             position: absolute;
-            width: 6px;
-            height: 6px;
-            background: var(--text-color);
+            background: var(--particle-color);
             border-radius: 50%;
-            box-shadow: 0 0 6px var(--text-color), 0 0 12px var(--accent-color);
+            box-shadow: 0 0 10px var(--accent-color), 0 0 20px var(--accent-color);
             pointer-events: none;
-            opacity: 0;
+            z-index: 4;
+            animation: blinkSpark 2s infinite ease-in-out;
+            transition: background-color 0.3s ease;
         }
 
-        .spark-1 { top: 15px; left: 80px; animation: sparkAnim 0.7s infinite steps(1) 0.1s; }
-        .spark-2 { top: 70px; right: 20px; animation: sparkAnim 0.5s infinite steps(1) 0.3s; }
-        .spark-3 { bottom: 60px; left: 15px; animation: sparkAnim 0.9s infinite steps(1) 0.2s; }
-        .spark-4 { bottom: 25px; right: 90px; animation: sparkAnim 0.6s infinite steps(1) 0.4s; }
-        .spark-5 { top: 180px; left: -10px; animation: sparkAnim 0.8s infinite steps(1) 0.5s; }
-
-        @keyframes sparkAnim {
-            0%, 100% { opacity: 0; transform: scale(0.3); }
-            30% { opacity: 1; transform: scale(1.5); }
-            60% { opacity: 0.4; transform: scale(0.8); }
+        @keyframes blinkSpark {
+            0%, 100% { opacity: 0.2; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
         }
 
-        .stats-section {
-            max-width: 1200px;
-            margin: 40px auto 80px auto;
-            padding: 0 25px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-            position: relative;
-            z-index: 1;
+        .spark-1 { width: 6px; height: 6px; top: 15px; right: 40px; animation-delay: 0s; }
+        .spark-2 { width: 8px; height: 8px; bottom: 30px; left: 15px; animation-delay: 0.5s; }
+        .spark-3 { width: 5px; height: 5px; top: 50%; right: -8px; animation-delay: 1s; }
+        .spark-4 { width: 7px; height: 7px; top: 10px; left: 60px; animation-delay: 1.5s; }
+        .spark-5 { width: 6px; height: 6px; bottom: 15px; right: 50px; animation-delay: 0.8s; }
+
+        @media (max-width: 900px) {
+            .hero {
+                flex-direction: column;
+                text-align: center;
+            }
         }
 
-        .stat-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            padding: 25px;
-            text-align: center;
-            backdrop-filter: blur(15px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-            transition: 0.3s;
-        }
-
-        .stat-card:hover {
-            border-color: var(--accent-color);
-            transform: translateY(-4px);
-        }
-
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--accent-color);
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            font-size: 1rem;
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        .section-container {
-            max-width: 1200px;
-            margin: 80px auto;
-            padding: 0 25px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-
-        .glass-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            padding: 35px;
-            backdrop-filter: blur(15px);
+        .ranking-section {
+            padding: 60px 4%;
             display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-        }
-
-        .glass-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -100%;
-            width: 50%;
-            height: 200%;
-            background: linear-gradient(
-                to right,
-                transparent,
-                var(--shimmer-color),
-                transparent
-            );
-            transform: rotate(30deg);
-            transition: 0.8s ease;
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .glass-card:hover {
-            border-color: var(--accent-color);
-            transform: translateY(-6px);
-            box-shadow: 0 15px 35px var(--accent-glow);
-        }
-
-        .glass-card:hover::before {
-            left: 120%;
-            opacity: 1;
-        }
-
-        .card-icon {
-            font-size: 2.5rem;
-            color: var(--accent-color);
-            margin-bottom: 20px;
-        }
-
-        .glass-card h3 {
-            font-size: 1.3rem;
-            margin: 0 0 10px 0;
-            font-weight: 700;
-        }
-
-        .glass-card p {
-            font-size: 0.95rem;
-            line-height: 1.5;
-            margin: 0;
-            color: var(--text-muted);
+            justify-content: center;
+            align-items: center;
         }
 
         .podium-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 30px;
-            align-items: flex-end;
-            margin-top: 30px;
+            grid-template-columns: repeat(3, 260px);
+            gap: 24px;
+            max-width: 1100px;
+            width: 100%;
+            justify-content: center;
+            align-items: start;
         }
 
-        .podium-card {
-            width: 100%;
-            box-sizing: border-box;
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px 20px;
+            min-height: 380px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            text-align: center;
+        }
+
+        .glass-card:hover {
+            border-color: var(--accent-color);
         }
 
         .center-card {
-            transform: translateY(-30px);
+            transform: translateY(-15px);
             border-color: var(--accent-color);
-            box-shadow: 0 12px 40px var(--accent-glow);
+            box-shadow: 0 12px 40px 0 rgba(192, 132, 252, 0.2);
         }
 
-        .center-card:hover {
-            transform: translateY(-36px);
-        }
-
-        .side-card {
-            transform: translateY(0);
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-bottom: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .ranking-list {
-            list-style: none;
-            padding: 0;
-            margin: 15px 0 0 0;
-            max-height: 230px;
-            overflow-y: auto;
-            padding-right: 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            width: 100%;
+            margin: auto 0;
+        }
+
+        .empty-state {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin: auto 0;
         }
 
         .ranking-item {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 10px 0;
+            justify-content: space-between;
+            padding: 8px 0;
             border-bottom: 1px solid var(--border-color);
-            font-size: 0.95rem;
+            width: 100%;
         }
 
-        .ranking-user {
+        .ranking-item:last-child {
+            border-bottom: none;
+        }
+
+        .user-info {
             display: flex;
             align-items: center;
             gap: 10px;
+        }
+
+        .ranking-pos {
+            font-weight: bold;
+            color: var(--accent-color);
+            min-width: 20px;
+        }
+
+        .user-avatar {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: 1px solid var(--accent-color);
+            object-fit: cover;
+        }
+
+        .user-name {
             color: var(--text-color);
-            font-weight: 600;
+            font-size: 0.9rem;
+            text-align: left;
         }
 
         .ranking-value {
+            font-weight: bold;
             color: var(--accent-color);
-            font-weight: 700;
-        }
-
-        .faq-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .faq-item {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 14px;
-            padding: 20px 25px;
-            backdrop-filter: blur(15px);
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .faq-item:hover {
-            border-color: var(--accent-color);
-        }
-
-        .faq-question {
-            font-weight: 700;
-            font-size: 1.1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .faq-answer {
-            margin-top: 12px;
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            line-height: 1.5;
-            display: none;
-        }
-
-        .faq-item.active .faq-answer {
-            display: block;
-        }
-
-        footer {
-            text-align: center;
-            padding: 30px 25px;
-            color: var(--text-muted);
             font-size: 0.9rem;
-            border-top: 1px solid var(--border-color);
-            background-color: var(--nav-bg);
-            margin-top: 60px;
-        }
-
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .footer-links {
-            display: flex;
-            gap: 20px;
-            font-weight: 600;
-        }
-
-        .footer-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-
-        .footer-links a:hover {
-            color: var(--accent-color);
         }
 
         @media (max-width: 900px) {
             .podium-grid {
                 grid-template-columns: 1fr;
-                align-items: stretch;
+                max-width: 320px;
             }
             .center-card {
                 transform: translateY(0);
@@ -590,642 +222,34 @@
 </head>
 <body>
 
-    <% 
-        const userLang = typeof currentLang !== 'undefined' ? currentLang : (typeof lang !== 'undefined' ? lang : 'es');
-        
-        const dict = {
-            es: {
-                badgeEvolution: "✦ La nueva evolución para servidores",
-                badgeOriginal: "Original de PREM",
-                heroTitle: "El ecosistema definitivo para creadores y comunidades",
-                heroDesc: "Reinventa la interacción de tus usuarios con sistemas avanzados de niveles, gestión automatizada y reproducción de audio en alta fidelidad.",
-                btnAdd: "Añadir el bot",
-                btnManage: "Gestionar servidores",
-                statServers: "Servidores Activos",
-                statUsers: "Usuarios Totales",
-                statCommands: "Comandos Ejecutados",
-                rankingTitle: "Ranking Global",
-                rankingDesc: "Los usuarios más destacados de todo el ecosistema de PREM.",
-                topEconomy: "Top Economía (Dinero)",
-                topActivity: "Top Actividad (XP)",
-                topMusic: "Top Melómanos (Música)",
-                noRecords: "Sin registros aún",
-                songsUnit: "songs",
-                featuresTitle: "Características Principales",
-                feat1Title: "Niveles y XP",
-                feat1Desc: "Fomenta la actividad en tu chat con tablas de clasificación dinámicas, roles automáticos por nivel y recompensas personalizadas.",
-                feat2Title: "Moderación Avanzada",
-                feat2Desc: "Protege tu servidor con sistemas automáticos anti-spam, registros detallados y herramientas inteligentes de sanción.",
-                feat3Title: "Música en Alta Fidelidad",
-                feat3Desc: "Disfruta de reproducción de audio fluida, sin cortes y con soporte para múltiples plataformas como YouTube y Spotify.",
-                commandsTitle: "Comandos Destacados",
-                cmd1Title: "Economía y Tienda",
-                cmd1Desc: "Crea una economía virtual con trabajos, recompensas diarias y roles personalizables que los usuarios pueden comprar.",
-                cmd2Title: "Sistema de Tickets",
-                cmd2Desc: "Brinda atención al cliente y soporte profesional con paneles privados y organizados de alta calidad.",
-                cmd3Title: "Bienvenida y Despedida",
-                cmd3Desc: "Saluda a los nuevos miembros y despide a quienes se van con mensajes personalizados y banners atractivos.",
-                reviewsTitle: "Confiado por Comunidades",
-                reviewsDesc: 'Usa el comando <code>/review</code> en Discord para dejar tu opinión de 4 o 5 estrellas.',
-                noReviews: 'Aún no hay reseñas positivas registradas. ¡Sé el primero en calificar con 4 o 5 estrellas usando <code>/review</code> en Discord!',
-                faqTitle: "Preguntas Frecuentes",
-                faq1Q: "¿Cómo agrego a PREM a mi servidor?",
-                faq1A: 'Simplemente haz clic en el botón "Añadir el bot" en la parte superior, selecciona tu servidor en la lista de Discord y otorga los permisos necesarios de administrador.',
-                faq2Q: "¿PREM es completamente gratuito?",
-                faq2A: '¡Sí, es de uso gratuito para cualquier comunidad básica! Aunque si buscas una experiencia superior, contamos con un plan <b>Premium</b> lleno de opciones exclusivas.',
-                faq3Q: "¿Cómo funciona el sistema de niveles y XP?",
-                faq3A: 'Tus usuarios ganan experiencia (XP) automáticamente al chatear y participar activamente en el servidor. Puedes activar o configurar las opciones de nivel desde el panel de control (Dashboard).',
-                faq4Q: "¿Cómo puedo reproducir música en mi canal de voz?",
-                faq4A: 'Entra a un canal de voz en Discord y utiliza el comando <code>/play</code> seguido del nombre o enlace de la canción para que PREM comience a reproducir audio de alta fidelidad.',
-                faq5Q: "¿Cómo consigo dinero o monedas virtuales?",
-                faq5A: 'Puedes reclamar recompensas diarias usando el comando <code>/daily</code>, trabajar duro con <code>/work</code> o arriesgarte a cometer crímenes con <code>/crime</code>.',
-                faq6Q: "¿Dónde puedo calificar al bot o dejar una reseña?",
-                faq6A: 'Puedes usar el comando interactivo <code>/review</code> en cualquier chat de Discord para calificar a PREM con estrellas y dejar tu opinión directamente en la página web.',
-                footerRights: "&copy; 2026 PREM Bot. Todos los derechos reservados.",
-                support: "Soporte",
-                tos: "Términos de Servicio",
-                privacy: "Política de Privacidad",
-                resources: "Recursos",
-                variables: "Variables"
-            },
-            en: {
-                badgeEvolution: "✦ The new evolution for servers",
-                badgeOriginal: "PREM Original",
-                heroTitle: "The ultimate ecosystem for creators and communities",
-                heroDesc: "Reinvent your users' interaction with advanced leveling systems, automated management, and high-fidelity audio playback.",
-                btnAdd: "Add to Discord",
-                btnManage: "Manage servers",
-                statServers: "Active Servers",
-                statUsers: "Total Users",
-                statCommands: "Commands Executed",
-                rankingTitle: "Global Leaderboards",
-                rankingDesc: "The most prominent users across the entire PREM ecosystem.",
-                topEconomy: "Top Economy (Money)",
-                topActivity: "Top Activity (XP)",
-                topMusic: "Top Music Fans",
-                noRecords: "No records yet",
-                songsUnit: "songs",
-                featuresTitle: "Main Features",
-                feat1Title: "Levels & XP",
-                feat1Desc: "Encourage chat activity with dynamic leaderboards, auto role rewards by level, and customized perks.",
-                feat2Title: "Advanced Moderation",
-                feat2Desc: "Protect your server with automatic anti-spam systems, detailed logs, and smart sanction tools.",
-                feat3Title: "High-Fidelity Music",
-                feat3Desc: "Enjoy smooth, lag-free audio playback with support for multiple platforms like YouTube and Spotify.",
-                commandsTitle: "Featured Commands",
-                cmd1Title: "Economy & Shop",
-                cmd1Desc: "Build a virtual economy featuring jobs, daily rewards, and customizable roles that users can purchase.",
-                cmd2Title: "Ticket System",
-                cmd2Desc: "Provide professional customer support using organized, high-quality private ticket panels.",
-                cmd3Title: "Welcome & Goodbye",
-                cmd3Desc: "Greet new members and bid farewell to those leaving with customized messages and cool banners.",
-                reviewsTitle: "Trusted by Communities",
-                reviewsDesc: 'Use the <code>/review</code> command on Discord to leave a 4 or 5-star rating.',
-                noReviews: 'No positive reviews recorded yet. Be the first to rate with 4 or 5 stars using <code>/review</code> on Discord!',
-                faqTitle: "Frequently Asked Questions",
-                faq1Q: "How do I add PREM to my server?",
-                faq1A: 'Simply click the "Add to Discord" button at the top, select your server from the Discord list, and grant the necessary administrator permissions.',
-                faq2Q: "Is PREM completely free?",
-                faq2A: 'Yes, it is free to use for any basic community! Although if you are looking for a superior experience, we offer a <b>Premium</b> plan packed with exclusive options.',
-                faq3Q: "How do the leveling and XP systems work?",
-                faq3A: 'Your users automatically earn experience (XP) by chatting and actively participating in the server. You can enable or configure level options directly from the Dashboard.',
-                faq4Q: "How can I play music in my voice channel?",
-                faq4A: 'Join a voice channel in Discord and use the <code>/play</code> command followed by the song name or link to let PREM start streaming high-fidelity audio.',
-                faq5Q: "How do I get virtual money or coins?",
-                faq5A: 'You can claim daily rewards using <code>/daily</code>, work hard with <code>/work</code>, or risk committing crimes with <code>/crime</code>.',
-                faq6Q: "Where can I rate the bot or leave a review?",
-                faq6A: 'You can use the interactive <code>/review</code> command in any Discord chat to rate PREM with stars and share your feedback directly on the website.',
-                footerRights: "&copy; 2026 PREM Bot. All rights reserved.",
-                support: "Support",
-                tos: "Terms of Service",
-                privacy: "Privacy Policy",
-                resources: "Resources",
-                variables: "Variables"
-            }
-        };
+    <!-- 1. Barra de navegación -->
+    <%- include('partials/navbar') %>
 
-        const t = dict[userLang] || dict['es'];
-    %>
+    <!-- 2. Sección Hero -->
+    <%- include('partials/hero') %>
 
-    <div class="layout-container" style="display: flex; flex-direction: column; min-height: 100vh;">
-        <nav>
-            <div class="nav-left">
-                <a href="/?lang=<%= userLang %>" class="brand-link">
-                    <img src="https://cdn.discordapp.com/avatars/1534632950224781548/a_678d6b7de1507542e3636f611d297e20.gif?size=2048" alt="Bot Avatar" class="bot-avatar">
-                    <span class="bot-name">PREM</span>
-                </a>
+    <!-- 3. Estadísticas Globales -->
+    <%- include('partials/stats') %>
 
-                <!-- RECURSOS -->
-                <div class="dropdown-container" style="position: relative; display: inline-block;">
-                    <div onclick="toggleResourcesMenu()" style="display: flex; align-items: center; gap: 6px; background: transparent; border: none; padding: 6px 10px; border-radius: 8px; cursor: pointer; transition: opacity 0.2s ease;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
-                        <span style="font-weight: 600; font-size: 0.95rem; color: var(--text-main);"><%= t.resources %></span>
-                        <i class="fa-solid fa-chevron-down" style="font-size: 11px; color: var(--text-muted);"></i>
-                    </div>
+    <!-- 4. Ranking Global -->
+    <%- include('partials/ranking') %>
 
-                    <div id="resourcesDropdownMenu" style="display: none; position: absolute; left: 0; top: 52px; width: 220px; background: var(--bg-sidebar); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; padding: 8px; backdrop-filter: blur(20px); text-align: left;">
-                        <a href="/variables" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'">
-                            <i class="fa-solid fa-code-merge" style="width: 16px; color: var(--text-muted);"></i> <%= t.variables %>
-                        </a>
-                        <a href="/comandos" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'">
-                            <i class="fa-solid fa-terminal" style="width: 16px; color: var(--text-muted);"></i> Comandos
-                        </a>
-                        <a href="/documentacion?lang=<%= userLang %>" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'">
-                            <i class="fa-solid fa-book" style="width: 16px; color: var(--text-muted);"></i> Guías / Docs
-                        </a>
-                    </div>
-                </div>
-            </div>
+    <!-- 5. Características Principales -->
+    <%- include('partials/features') %>
 
-            <div style="display: flex; align-items: center; gap: 15px;">
-                
-                <!-- NOTIFICACIONES -->
-                <div class="notification-dropdown-container" style="position: relative; display: inline-block;">
-                    <button class="theme-btn" onclick="toggleNotificationMenu()" title="Notificaciones" style="position: relative;">
-                        <i class="fa-solid fa-bell"></i>
-                        <% if (typeof hasNotifications !== 'undefined' && hasNotifications) { %>
-                            <span style="position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; background-color: #c084fc; border-radius: 50%; box-shadow: 0 0 10px #c084fc, 0 0 5px #ffffff;"></span>
-                        <% } %>
-                    </button>
+    <!-- 6. Comandos Destacados -->
+    <%- include('partials/commands') %>
 
-                    <div id="notificationDropdownMenu" style="display: none; position: absolute; right: 0; top: 52px; width: 280px; background: var(--bg-sidebar); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; padding: 12px; backdrop-filter: blur(20px); text-align: left;">
-                        <div style="font-weight: 700; font-size: 14px; color: var(--text-main); margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
-                            <span>Notificaciones</span>
-                            <span style="font-size: 10px; color: var(--accent-color); cursor: pointer;">Marcar leídas</span>
-                        </div>
-                        <div style="padding: 12px 8px; color: var(--text-muted); font-size: 13px; text-align: center;">
-                            No hay notificaciones nuevas.
-                        </div>
-                    </div>
-                </div>
+    <!-- 7. Reseñas de la Comunidad -->
+    <%- include('partials/reviews') %>
 
-                <!-- SELECTOR DE IDIOMAS -->
-                <div class="lang-dropdown-container" style="position: relative; display: inline-block;">
-                    <div onclick="toggleLangMenu()" style="display: flex; align-items: center; gap: 8px; background: var(--card-bg); border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 25px; cursor: pointer; backdrop-filter: blur(10px); transition: all 0.3s ease;" onmouseover="this.style.borderColor='var(--accent-color)'; this.style.boxShadow='0 0 15px var(--accent-glow)';" onmouseout="this.style.borderColor='var(--border-color)'; this.style.boxShadow='none';">
-                        <img src="https://flagcdn.com/24x18/<%= userLang === 'en' ? 'us' : userLang === 'pt' ? 'br' : userLang === 'fr' ? 'fr' : userLang === 'de' ? 'de' : userLang === 'it' ? 'it' : userLang === 'ru' ? 'ru' : userLang === 'ja' ? 'jp' : userLang === 'zh' ? 'cn' : userLang === 'ar' ? 'sa' : 'es' %>.png" alt="flag" style="width: 20px; height: 15px; border-radius: 2px; object-fit: cover;">
-                        <span style="font-weight: 700; font-size: 0.95rem; color: var(--text-main);"><%= userLang.toUpperCase() %></span>
-                        <i class="fa-solid fa-chevron-down" style="font-size: 11px; color: var(--text-muted); margin-left: 2px;"></i>
-                    </div>
+    <!-- 8. Preguntas Frecuentes -->
+    <%- include('partials/faq') %>
 
-                    <div id="langDropdownMenu" style="display: none; position: absolute; right: 0; top: 52px; width: 220px; background: var(--bg-sidebar); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; padding: 10px; backdrop-filter: blur(20px); text-align: left;">
-                        <div style="font-weight: 700; font-size: 13px; color: var(--text-main); padding: 6px 10px 10px 10px; border-bottom: 1px solid var(--border); margin-bottom: 6px;">
-                            <%= userLang === 'en' ? 'Select a language' : 'Selecciona un idioma' %>
-                        </div>
+    <!-- 9. Pie de página -->
+    <%- include('partials/footer') %>
 
-                        <a href="/?lang=es" style="display: flex; align-items: center; gap: 12px; padding: 9px 10px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'"><img src="https://flagcdn.com/24x18/es.png" style="width: 20px; height: 15px; border-radius: 2px; object-fit: cover;"> <span style="<%= userLang === 'es' ? 'color: var(--accent-color); font-weight: 600;' : '' %>">Español</span></a>
-                        <a href="/?lang=en" style="display: flex; align-items: center; gap: 12px; padding: 9px 10px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'"><img src="https://flagcdn.com/24x18/us.png" style="width: 20px; height: 15px; border-radius: 2px; object-fit: cover;"> <span style="<%= userLang === 'en' ? 'color: var(--accent-color); font-weight: 600;' : '' %>">English</span></a>
-                        <a href="/?lang=pt" style="display: flex; align-items: center; gap: 12px; padding: 9px 10px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'"><img src="https://flagcdn.com/24x18/br.png" style="width: 20px; height: 15px; border-radius: 2px; object-fit: cover;"> <span style="<%= userLang === 'pt' ? 'color: var(--accent-color); font-weight: 600;' : '' %>">Português (Brasil)</span></a>
-                        <a href="/?lang=fr" style="display: flex; align-items: center; gap: 12px; padding: 9px 10px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'"><img src="https://flagcdn.com/24x18/fr.png" style="width: 20px; height: 15px; border-radius: 2px; object-fit: cover;"> <span style="<%= userLang === 'fr' ? 'color: var(--accent-color); font-weight: 600;' : '' %>">Français</span></a>
-                        <a href="/?lang=de" style="display: flex; align-items: center; gap: 12px; padding: 9px 10px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'"><img src="https://flagcdn.com/24x18/de.png" style="width: 20px; height: 15px; border-radius: 2px; object-fit: cover;"> <span style="<%= userLang === 'de' ? 'color: var(--accent-color); font-weight: 600;' : '' %>">Deutsch</span></a>
-                        <a href="/?lang=it" style="display: flex; align-items: center; gap: 12px; padding: 9px 10px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'"><img src="https://flagcdn.com/24x18/it.png" style="width: 20px; height: 15px; border-radius: 2px; object-fit: cover;"> <span style="<%= userLang === 'it' ? 'color: var(--accent-color); font-weight: 600;' : '' %>">Italiano</span></a>
-                        <a href="/?lang=ru" style="display: flex; align-items: center; gap: 12px; padding: 9px 10px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'"><img src="https://flagcdn.com/24x18/ru.png" style="width: 20px; height: 15px; border-radius: 2px; object-fit: cover;"> <span style="<%= userLang === 'ru' ? 'color: var(--accent-color); font-weight: 600;' : '' %>">Русский</span></a>
-                        <a href="/?lang=ja" style="display: flex; align-items: center; gap: 12px; padding: 9px 10px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'"><img src="https://flagcdn.com/24x18/jp.png" style="width: 20px; height: 15px; border-radius: 2px; object-fit: cover;"> <span style="<%= userLang === 'ja' ? 'color: var(--accent-color); font-weight: 600;' : '' %>">日本語</span></a>
-                        <a href="/?lang=zh" style="display: flex; align-items: center; gap: 12px; padding: 9px 10px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'"><img src="https://flagcdn.com/24x18/cn.png" style="width: 20px; height: 15px; border-radius: 2px; object-fit: cover;"> <span style="<%= userLang === 'zh' ? 'color: var(--accent-color); font-weight: 600;' : '' %>">中文</span></a>
-                        <a href="/?lang=ar" style="display: flex; align-items: center; gap: 12px; padding: 9px 10px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'"><img src="https://flagcdn.com/24x18/sa.png" style="width: 20px; height: 15px; border-radius: 2px; object-fit: cover;"> <span style="<%= userLang === 'ar' ? 'color: var(--accent-color); font-weight: 600;' : '' %>">العربية</span></a>
-                    </div>
-                </div>
-
-                <!-- TEMA -->
-                <button class="theme-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Cambiar tono de pantalla">
-                    <i class="fa-solid fa-moon" id="themeIcon"></i>
-                </button>
-
-                <!-- PERFIL DE USUARIO O LOGIN -->
-                <% if (typeof user !== 'undefined' && user) { %>
-                    <div class="user-dropdown-container" style="position: relative; display: inline-block;">
-                        <div onclick="toggleUserMenu()" class="user-profile">
-                            <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png" alt="Avatar" class="user-avatar">
-                            <span style="font-weight: 600; font-size: 0.95rem; color: var(--text-main);"><%= user.global_name || user.username %></span>
-                            <i class="fa-solid fa-chevron-down" style="font-size: 11px; color: var(--text-muted); margin-left: 2px;"></i>
-                        </div>
-
-                        <div id="userDropdownMenu" style="display: none; position: absolute; right: 0; top: 52px; width: 260px; background: var(--bg-sidebar); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; padding: 8px; backdrop-filter: blur(20px); text-align: left;">
-                            <div style="padding: 10px 12px; border-bottom: 1px solid var(--border); margin-bottom: 6px;">
-                                <div style="font-weight: 700; font-size: 14px; color: var(--text-main);"><%= user.global_name || user.username %></div>
-                                <div style="font-size: 12px; color: var(--text-muted);">@<%= user.username %></div>
-                            </div>
-
-                            <a href="/dashboard/account?lang=<%= userLang %>" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'">
-                                <i class="fa-solid fa-user" style="width: 16px; color: var(--text-muted);"></i> Mi cuenta
-                            </a>
-
-                            <a href="/dashboard?lang=<%= userLang %>" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'">
-                                <i class="fa-solid fa-server" style="width: 16px; color: var(--text-muted);"></i> Mis servidores
-                            </a>
-
-                            <a href="#" onclick="toggleTheme(); return false;" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'">
-                                <i class="fa-solid fa-circle-half-stroke" style="width: 16px; color: var(--text-muted);"></i> Preferencias / Tema
-                            </a>
-
-                            <% if (user.id === '931545363565908041') { %>
-                                <a href="/dashboard/manager" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; text-decoration: none; border-radius: 8px; font-size: 13px; font-weight: 500; background: linear-gradient(135deg, rgba(217,70,239,0.15), rgba(192,132,252,0.15)); border: 1px solid rgba(217,70,239,0.4);" onmouseover="this.style.background='linear-gradient(135deg, rgba(217,70,239,0.25), rgba(192,132,252,0.25))'" onmouseout="this.style.background='linear-gradient(135deg, rgba(217,70,239,0.15), rgba(192,132,252,0.15))'">
-                                    <i class="fa-solid fa-shield-halved" style="width: 16px; color: #e879f9; text-shadow: 0 0 10px rgba(232,121,249,0.7);"></i> 
-                                    <span style="background: linear-gradient(135deg, #ffffff, #f5d0fe, #e879f9); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700;">Manager</span>
-                                </a>
-                            <% } %>
-
-                            <div style="font-size: 10px; color: var(--text-muted); font-weight: bold; margin: 8px 12px 4px 12px; text-transform: uppercase;">Gestión de PREM Bot</div>
-
-                            <a href="/dashboard/custom-bot?lang=<%= userLang %>" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'">
-                                <i class="fa-solid fa-robot" style="width: 16px; color: var(--text-muted);"></i> Personalización de Bot
-                            </a>
-
-                            <a href="/dashboard/custom-commands?lang=<%= userLang %>" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; text-decoration: none; border-radius: 8px; font-size: 13px; font-weight: 500; background: linear-gradient(135deg, rgba(250,204,21,0.15), rgba(192,132,252,0.15)); border: 1px solid rgba(250,204,21,0.4);" onmouseover="this.style.background='linear-gradient(135deg, rgba(250,204,21,0.25), rgba(192,132,252,0.25))'" onmouseout="this.style.background='linear-gradient(135deg, rgba(250,204,21,0.15), rgba(192,132,252,0.15))'">
-                                <i class="fa-solid fa-code" style="width: 16px; color: #facc15; text-shadow: 0 0 10px rgba(250,204,21,0.7);"></i> 
-                                <span style="background: linear-gradient(135deg, #ffffff, #fef08a, #facc15); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700;">Comandos personalizados</span>
-                                <span style="margin-left: auto; background: linear-gradient(135deg, #ffffff, #fef08a, #facc15); color: #713f12; font-size: 9px; padding: 3px 8px; border-radius: 6px; font-weight: 800; text-transform: uppercase;">PREMIUM</span>
-                            </a>
-
-                            <div style="font-size: 10px; color: var(--text-muted); font-weight: bold; margin: 8px 12px 4px 12px; text-transform: uppercase;">Comunidad</div>
-
-                            <!-- LINK DE SOPORTE ACTUALIZADO -->
-                            <a href="https://discord.gg/xCuyb5Z33X" target="_blank" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'">
-                                <i class="fa-brands fa-discord" style="width: 16px; color: #5865F2;"></i> Servidor de Soporte
-                            </a>
-
-                            <a href="/documentacion?lang=<%= userLang %>" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'">
-                                <i class="fa-solid fa-book" style="width: 16px; color: var(--text-muted);"></i> Documentación / Guías
-                            </a>
-
-                            <a href="#" target="_blank" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: var(--text-main); text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='var(--hover-sidebar)'" onmouseout="this.style.background='transparent'">
-                                <i class="fa-solid fa-star" style="width: 16px; color: #eab308;"></i> Votar por el bot
-                            </a>
-
-                            <div style="padding: 10px 12px; border-top: 1px solid var(--border); margin-top: 6px; font-size: 12px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
-                                <span><span style="height: 8px; width: 8px; background-color: #22c55e; border-radius: 50%; display: inline-block; margin-right: 5px;"></span> Estado de la API</span>
-                                <span style="color: #22c55e; font-weight: 600; font-size: 11px;">Operational</span>
-                            </div>
-
-                            <div style="padding: 0 12px 6px 12px; font-size: 11px; color: var(--text-muted); display: flex; justify-content: space-between;">
-                                <span>Versión actual</span>
-                                <span style="font-weight: 600; color: var(--text-main);">PREM Bot v2.5</span>
-                            </div>
-
-                            <div style="border-top: 1px solid var(--border); margin-top: 4px; padding-top: 4px;">
-                                <a href="/logout" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: #ef4444; text-decoration: none; border-radius: 8px; font-size: 13px;" onmouseover="this.style.background='rgba(239,68,68,0.1)'" onmouseout="this.style.background='transparent'">
-                                    <i class="fa-solid fa-arrow-right-from-bracket" style="width: 16px;"></i> Cerrar sesión
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                <% } else { %>
-                    <a href="/auth/discord" class="login-btn"><i class="fa-brands fa-discord"></i> Login</a>
-                <% } %>
-            </div>
-        </nav>
-
-        <div class="hero">
-            <div class="hero-content">
-                <div class="badge-container">
-                    <div class="badge"><%= t.badgeEvolution %></div>
-                    <div class="prem-original-badge">
-                        <i class="fa-solid fa-certificate" style="font-size: 0.8rem; color: var(--accent-color);"></i> <%= t.badgeOriginal %>
-                    </div>
-                </div>
-
-                <h1><%= t.heroTitle %></h1>
-                <p><%= t.heroDesc %></p>
-
-                <div class="hero-buttons">
-                    <a href="https://discord.com/oauth2/authorize?client_id=1534632950224781548&scope=bot&permissions=8" target="_blank" class="btn-primary">
-                        <i class="fa-solid fa-plus"></i> <%= t.btnAdd %>
-                    </a>
-                    <a href="/dashboard?lang=<%= userLang %>" class="btn-secondary">
-                        <i class="fa-solid fa-server"></i> <%= t.btnManage %>
-                    </a>
-                </div>
-            </div>
-            
-            <div class="hero-image">
-                <div class="avatar-container">
-                    <img src="https://cdn.discordapp.com/avatars/1534632950224781548/a_678d6b7de1507542e3636f611d297e20.gif?size=2048" alt="PREM Bot" class="electric-avatar">
-                    <div class="spark spark-1"></div>
-                    <div class="spark spark-2"></div>
-                    <div class="spark spark-3"></div>
-                    <div class="spark spark-4"></div>
-                    <div class="spark spark-5"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- CONTADOR DE ESTADÍSTICAS -->
-        <div class="stats-section">
-            <div class="stat-card">
-                <div class="stat-number"><%= typeof serverCount !== 'undefined' ? serverCount.toLocaleString() : 0 %></div>
-                <div class="stat-label"><%= t.statServers %></div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number"><%= typeof totalUsers !== 'undefined' ? totalUsers.toLocaleString() : 0 %></div>
-                <div class="stat-label"><%= t.statUsers %></div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number"><%= typeof totalCommands !== 'undefined' ? totalCommands.toLocaleString() : 0 %></div>
-                <div class="stat-label"><%= t.statCommands %></div>
-            </div>
-        </div>
-
-        <!-- SECCIÓN DE RANKING GLOBAL -->
-        <section class="section-container">
-            <div style="text-align: center; margin-bottom: 50px;">
-                <h2 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 15px;"><%= t.rankingTitle %></h2>
-                <p style="color: var(--text-muted); font-size: 1.1rem; margin: 0;"><%= t.rankingDesc %></p>
-            </div>
-
-            <div class="podium-grid">
-                <!-- 1. Top Economía -->
-                <div class="glass-card podium-card side-card">
-                    <div class="card-icon"><i class="fa-solid fa-coins"></i></div>
-                    <h3><%= t.topEconomy %></h3>
-                    <ul class="ranking-list">
-                        <% if (typeof rankingDinero !== 'undefined' && rankingDinero.length > 0) { %>
-                            <% rankingDinero.forEach((user, index) => { %>
-                                <li class="ranking-item">
-                                    <span class="ranking-user">
-                                        <span style="font-weight: 700; color: var(--accent-color);">#<%= index + 1 %></span>
-                                        <img src="<%= user.avatar %>" alt="Avatar" style="width: 26px; height: 26px; border-radius: 50%; object-fit: cover; border: 1px solid var(--accent-color); margin-left: 4px;">
-                                        <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100px;"><%= user.username %></span>
-                                    </span>
-                                    <span class="ranking-value">$<%= user.value.toLocaleString() %></span>
-                                </li>
-                            <% }) %>
-                        <% } else { %>
-                            <li class="ranking-item" style="color: var(--text-muted); justify-content: center; border: none; padding-top: 25px;"><%= t.noRecords %></li>
-                        <% } %>
-                    </ul>
-                </div>
-
-                <!-- 2. Top Actividad / XP -->
-                <div class="glass-card podium-card center-card">
-                    <div class="card-icon"><i class="fa-solid fa-trophy"></i></div>
-                    <h3><%= t.topActivity %></h3>
-                    <ul class="ranking-list">
-                        <% if (typeof rankingXP !== 'undefined' && rankingXP.length > 0) { %>
-                            <% rankingXP.forEach((user, index) => { %>
-                                <li class="ranking-item">
-                                    <span class="ranking-user">
-                                        <span style="font-weight: 700; color: var(--accent-color);">#<%= index + 1 %></span>
-                                        <img src="<%= user.avatar %>" alt="Avatar" style="width: 26px; height: 26px; border-radius: 50%; object-fit: cover; border: 1px solid var(--accent-color); margin-left: 4px;">
-                                        <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100px;"><%= user.username %></span>
-                                    </span>
-                                    <span class="ranking-value"><%= user.value.toLocaleString() %> XP</span>
-                                </li>
-                            <% }) %>
-                        <% } else { %>
-                            <li class="ranking-item" style="color: var(--text-muted); justify-content: center; border: none; padding-top: 25px;"><%= t.noRecords %></li>
-                        <% } %>
-                    </ul>
-                </div>
-
-                <!-- 3. Top Melómanos / Música -->
-                <div class="glass-card podium-card side-card">
-                    <div class="card-icon"><i class="fa-solid fa-music"></i></div>
-                    <h3><%= t.topMusic %></h3>
-                    <ul class="ranking-list">
-                        <% if (typeof rankingMusica !== 'undefined' && rankingMusica.length > 0) { %>
-                            <% rankingMusica.forEach((user, index) => { %>
-                                <li class="ranking-item">
-                                    <span class="ranking-user">
-                                        <span style="font-weight: 700; color: var(--accent-color);">#<%= index + 1 %></span>
-                                        <img src="<%= user.avatar %>" alt="Avatar" style="width: 26px; height: 26px; border-radius: 50%; object-fit: cover; border: 1px solid var(--accent-color); margin-left: 4px;">
-                                        <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100px;"><%= user.username %></span>
-                                    </span>
-                                    <span class="ranking-value"><%= user.value.toLocaleString() %> <%= t.songsUnit %></span>
-                                </li>
-                            <% }) %>
-                        <% } else { %>
-                            <li class="ranking-item" style="color: var(--text-muted); justify-content: center; border: none; padding-top: 25px;"><%= t.noRecords %></li>
-                        <% } %>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECCIÓN DE CARACTERÍSTICAS -->
-        <section class="section-container">
-            <div style="text-align: center; margin-bottom: 50px;">
-                <h2 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 15px;"><%= t.featuresTitle %></h2>
-            </div>
-            <div class="cards-grid">
-                <div class="glass-card">
-                    <div class="card-icon"><i class="fa-solid fa-trophy"></i></div>
-                    <h3><%= t.feat1Title %></h3>
-                    <p><%= t.feat1Desc %></p>
-                </div>
-                <div class="glass-card">
-                    <div class="card-icon"><i class="fa-solid fa-shield-halved"></i></div>
-                    <h3><%= t.feat2Title %></h3>
-                    <p><%= t.feat2Desc %></p>
-                </div>
-                <div class="glass-card">
-                    <div class="card-icon"><i class="fa-solid fa-music"></i></div>
-                    <h3><%= t.feat3Title %></h3>
-                    <p><%= t.feat3Desc %></p>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECCIÓN DE COMANDOS -->
-        <section class="section-container">
-            <div style="text-align: center; margin-bottom: 50px;">
-                <h2 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 15px;"><%= t.commandsTitle %></h2>
-            </div>
-            <div class="cards-grid">
-                <div class="glass-card">
-                    <div class="card-icon"><i class="fa-solid fa-coins"></i></div>
-                    <h3><%= t.cmd1Title %></h3>
-                    <p><%= t.cmd1Desc %></p>
-                </div>
-                <div class="glass-card">
-                    <div class="card-icon"><i class="fa-solid fa-ticket"></i></div>
-                    <h3><%= t.cmd2Title %></h3>
-                    <p><%= t.cmd2Desc %></p>
-                </div>
-                <div class="glass-card">
-                    <div class="card-icon"><i class="fa-solid fa-hand-sparkles"></i></div>
-                    <h3><%= t.cmd3Title %></h3>
-                    <p><%= t.cmd3Desc %></p>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECCIÓN DE TESTIMONIOS -->
-        <section class="section-container">
-            <div style="text-align: center; margin-bottom: 50px;">
-                <h2 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 15px;"><%= t.reviewsTitle %></h2>
-                <p style="color: var(--text-muted); font-size: 1rem;"><%- t.reviewsDesc %></p>
-            </div>
-            <div class="cards-grid">
-                <% if (typeof listaReviews !== 'undefined' && listaReviews.length > 0) { %>
-                    <% listaReviews.slice(-4).reverse().forEach(rev => { %>
-                        <div class="glass-card">
-                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 15px;">
-                                <img src="<%= rev.avatar %>" alt="Avatar" style="width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--accent-color);">
-                                <div>
-                                    <h4 style="margin: 0; font-size: 1.1rem; color: var(--text-color);"><%= rev.usuario %></h4>
-                                    <span style="font-size: 0.8rem; color: var(--text-muted);"><%= rev.servidor %></span>
-                                </div>
-                            </div>
-                            <div style="color: #fbbf24; margin-bottom: 10px; font-size: 0.9rem;">
-                                <% for(let i = 0; i < rev.estrellas; i++) { %>★<% } %>
-                            </div>
-                            <p style="font-style: italic; margin: 0; color: var(--text-muted);">"<%= rev.comentario %>"</p>
-                        </div>
-                    <% }) %>
-                <% } else { %>
-                    <div class="glass-card" style="grid-column: 1 / -1; text-align: center;">
-                        <p style="color: var(--text-muted);"><%- t.noReviews %></p>
-                    </div>
-                <% } %>
-            </div>
-        </section>
-
-        <!-- PREGUNTAS FRECUENTES (FAQ) -->
-        <section class="section-container">
-            <div style="text-align: center; margin-bottom: 50px;">
-                <h2 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 15px;"><%= t.faqTitle %></h2>
-            </div>
-            <div class="faq-grid">
-                <div class="faq-item" onclick="this.classList.toggle('active')">
-                    <div class="faq-question">
-                        <span><%= t.faq1Q %></span>
-                        <i class="fa-solid fa-chevron-down" style="font-size: 0.9rem;"></i>
-                    </div>
-                    <div class="faq-answer"><%= t.faq1A %></div>
-                </div>
-                <div class="faq-item" onclick="this.classList.toggle('active')">
-                    <div class="faq-question">
-                        <span><%= t.faq2Q %></span>
-                        <i class="fa-solid fa-chevron-down" style="font-size: 0.9rem;"></i>
-                    </div>
-                    <div class="faq-answer"><%- t.faq2A %></div>
-                </div>
-                <div class="faq-item" onclick="this.classList.toggle('active')">
-                    <div class="faq-question">
-                        <span><%= t.faq3Q %></span>
-                        <i class="fa-solid fa-chevron-down" style="font-size: 0.9rem;"></i>
-                    </div>
-                    <div class="faq-answer"><%- t.faq3A %></div>
-                </div>
-                <div class="faq-item" onclick="this.classList.toggle('active')">
-                    <div class="faq-question">
-                        <span><%= t.faq4Q %></span>
-                        <i class="fa-solid fa-chevron-down" style="font-size: 0.9rem;"></i>
-                    </div>
-                    <div class="faq-answer"><%- t.faq4A %></div>
-                </div>
-                <div class="faq-item" onclick="this.classList.toggle('active')">
-                    <div class="faq-question">
-                        <span><%= t.faq5Q %></span>
-                        <i class="fa-solid fa-chevron-down" style="font-size: 0.9rem;"></i>
-                    </div>
-                    <div class="faq-answer"><%- t.faq5A %></div>
-                </div>
-                <div class="faq-item" onclick="this.classList.toggle('active')">
-                    <div class="faq-question">
-                        <span><%= t.faq6Q %></span>
-                        <i class="fa-solid fa-chevron-down" style="font-size: 0.9rem;"></i>
-                    </div>
-                    <div class="faq-answer"><%- t.faq6A %></div>
-                </div>
-            </div>
-        </section>
-
-        <footer>
-            <div class="footer-content">
-                <p style="margin: 0;"><%- t.footerRights %></p>
-                <div class="footer-links">
-                    <!-- LINK DE SOPORTE EN FOOTER ACTUALIZADO -->
-                    <a href="https://discord.gg/xCuyb5Z33X" target="_blank"><%= t.support %></a>
-                    <a href="/tos?lang=<%= userLang %>"><%= t.tos %></a>
-                    <a href="/privacy?lang=<%= userLang %>"><%= t.privacy %></a>
-                </div>
-            </div>
-        </footer>
-    </div>
-
-    <script>
-        function toggleResourcesMenu() {
-            const menu = document.getElementById('resourcesDropdownMenu');
-            const userMenu = document.getElementById('userDropdownMenu');
-            const notifMenu = document.getElementById('notificationDropdownMenu');
-            const langMenu = document.getElementById('langDropdownMenu');
-            if (userMenu) userMenu.style.display = 'none';
-            if (notifMenu) notifMenu.style.display = 'none';
-            if (langMenu) langMenu.style.display = 'none';
-            if (menu) menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-        }
-
-        function toggleNotificationMenu() {
-            const menu = document.getElementById('notificationDropdownMenu');
-            const userMenu = document.getElementById('userDropdownMenu');
-            const resMenu = document.getElementById('resourcesDropdownMenu');
-            const langMenu = document.getElementById('langDropdownMenu');
-            if (userMenu) userMenu.style.display = 'none';
-            if (resMenu) resMenu.style.display = 'none';
-            if (langMenu) langMenu.style.display = 'none';
-            if (menu) menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-        }
-
-        function toggleLangMenu() {
-            const menu = document.getElementById('langDropdownMenu');
-            const userMenu = document.getElementById('userDropdownMenu');
-            const resMenu = document.getElementById('resourcesDropdownMenu');
-            const notifMenu = document.getElementById('notificationDropdownMenu');
-            if (userMenu) userMenu.style.display = 'none';
-            if (resMenu) resMenu.style.display = 'none';
-            if (notifMenu) notifMenu.style.display = 'none';
-            if (menu) menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-        }
-
-        function toggleUserMenu() {
-            const menu = document.getElementById('userDropdownMenu');
-            const resMenu = document.getElementById('resourcesDropdownMenu');
-            const notifMenu = document.getElementById('notificationDropdownMenu');
-            const langMenu = document.getElementById('langDropdownMenu');
-            if (resMenu) resMenu.style.display = 'none';
-            if (notifMenu) notifMenu.style.display = 'none';
-            if (langMenu) langMenu.style.display = 'none';
-            if (menu) menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-        }
-
-        function toggleTheme() {
-            const html = document.documentElement;
-            const themeIcon = document.getElementById('themeIcon');
-            const currentTheme = html.getAttribute('data-theme');
-
-            if (currentTheme === 'light') {
-                html.setAttribute('data-theme', 'dark');
-                themeIcon.className = 'fa-solid fa-moon';
-                localStorage.setItem('prem_theme', 'dark');
-            } else {
-                html.setAttribute('data-theme', 'light');
-                themeIcon.className = 'fa-solid fa-sun';
-                localStorage.setItem('prem_theme', 'light');
-            }
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedTheme = localStorage.getItem('prem_theme') || 'dark';
-            const html = document.documentElement;
-            const themeIcon = document.getElementById('themeIcon');
-            
-            html.setAttribute('data-theme', savedTheme);
-            if (themeIcon) {
-                themeIcon.className = savedTheme === 'light' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-            }
-        });
-
-        window.onclick = function(event) {
-            if (!event.target.closest('.user-dropdown-container') && !event.target.closest('.dropdown-container') && !event.target.closest('.notification-dropdown-container') && !event.target.closest('.lang-dropdown-container')) {
-                const userMenu = document.getElementById('userDropdownMenu');
-                const resMenu = document.getElementById('resourcesDropdownMenu');
-                const notifMenu = document.getElementById('notificationDropdownMenu');
-                const langMenu = document.getElementById('langDropdownMenu');
-                if (userMenu) userMenu.style.display = 'none';
-                if (resMenu) resMenu.style.display = 'none';
-                if (notifMenu) notifMenu.style.display = 'none';
-                if (langMenu) langMenu.style.display = 'none';
-            }
-        }
-    </script>
+    <!-- Scripts del cliente -->
+    <script src="/js/main.js"></script>
 </body>
 </html>
