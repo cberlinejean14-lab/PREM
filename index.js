@@ -2,10 +2,11 @@ require('dotenv').config();
 const { Client, GatewayIntentBits } = require('discord.js');
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 
 const app = express();
 
-// 1. Inicializar el cliente de Discord con sus Intents necesarios
+// 1. Inicializar el cliente de Discord con sus Intents necesarios para métricas reales
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -18,18 +19,43 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Función auxiliar para sumar comandos al archivo stats.json de manera segura
+function sumarComando() {
+    try {
+        let stats = { totalCommands: 0 };
+        if (fs.existsSync('./stats.json')) {
+            stats = JSON.parse(fs.readFileSync('./stats.json', 'utf8'));
+        }
+        stats.totalCommands = (stats.totalCommands || 0) + 1;
+        fs.writeFileSync('./stats.json', JSON.stringify(stats, null, 2));
+    } catch (error) {
+        console.error('Error al actualizar el contador de comandos:', error);
+    }
+}
+
 // 2. Ruta API para alimentar las estadísticas en tiempo real
 app.get('/api/stats', async (req, res) => {
     try {
         const serverCount = client.guilds.cache.size;
+        
         // Suma los miembros de todos los servidores en caché de forma segura
-        const totalUsers = client.guilds.cache.reduce((acc, guild) => acc + guild.memberCount, 0);
-        const totalCommands = 2800000; // Puedes cambiarlo si tienes un contador en base de datos
+        const totalUsers = client.guilds.cache.reduce((acc, guild) => acc + (guild.memberCount || 0), 0);
+        
+        // Leemos el archivo stats.json para obtener los comandos reales
+        let totalCommands = 0;
+        try {
+            if (fs.existsSync('./stats.json')) {
+                const statsData = JSON.parse(fs.readFileSync('./stats.json', 'utf8'));
+                totalCommands = statsData.totalCommands || 0;
+            }
+        } catch (e) {
+            totalCommands = 0;
+        }
 
         res.json({
-            servers: serverCount.toLocaleString() + '+',
-            users: (totalUsers / 1000).toFixed(1).replace('.0', '') + 'K+',
-            commands: (totalCommands / 1000000).toFixed(1).replace('.0', '') + 'M+'
+            servers: serverCount.toLocaleString(),
+            users: totalUsers.toLocaleString(),
+            commands: totalCommands.toLocaleString()
         });
     } catch (error) {
         console.error('Error al obtener estadísticas en tiempo real:', error);
@@ -63,8 +89,17 @@ app.get('/dashboard', (req, res) => {
     });
 });
 
-// 5. Iniciar sesión del bot de Discord y levantar el servidor web con el puerto de Railway y 0.0.0.0
-const TOKEN = process.env.TOKEN;
+// Detector automático de comandos ejecutados en Discord
+client.on('interactionCreate', async interaction => {
+    // Verificamos si la interacción es un comando de barra (ChatInputCommand)
+    if (!interaction.isChatInputCommand()) return;
+
+    // Sumamos +1 al archivo stats.json cada vez que alguien usa un comando
+    sumarComando();
+});
+
+// 5. Iniciar sesión del bot de Discord y levantar el servidor web
+const TOKEN = process.env.DISCORD_TOKEN;
 const PORT = process.env.PORT || 3000;
 
 client.login(TOKEN).then(() => {
